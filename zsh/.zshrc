@@ -140,6 +140,8 @@ alias vr='vagrant reload'
 alias vs='vagrant ssh'
 alias vu='vagrant up'
 
+alias rm="trash"
+
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
 
