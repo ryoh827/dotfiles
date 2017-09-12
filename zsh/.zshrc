@@ -6,6 +6,8 @@
 export LANG=ja_JP.UTF-8
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
+export GOPATH="$HOME/go"
+export PATH="/Users/ryota/anaconda/bin:$PATH"
 
 #init
 if [ -d $HOME/.anyenv ] ; then
@@ -137,12 +139,19 @@ alias mv='mv -i'
 
 alias mkdir='mkdir -p'
 
+alias diff='diff -u'
+
+alias h='history'
+
 alias vh='vagrant halt'
 alias vr='vagrant reload'
 alias vs='vagrant ssh'
 alias vu='vagrant up'
 
 alias rm="trash"
+
+alias atssh='ssh -i ~/.ssh/atfreaks/id_rsa'
+alias atscp='scp -i ~/.ssh/atfreaks/id_rsa'
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
@@ -170,8 +179,6 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 # 補完機能を有効にする
 autoload -Uz compinit
 compinit -u
-
-export PATH="$(brew --prefix homebrew/php/php55)/bin:$PATH"
 
 ########################################
 # OS 別の設定
