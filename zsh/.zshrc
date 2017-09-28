@@ -143,11 +143,6 @@ alias diff='diff -u'
 
 alias h='history'
 
-alias vh='vagrant halt'
-alias vr='vagrant reload'
-alias vs='vagrant ssh'
-alias vu='vagrant up'
-
 alias rm="trash"
 
 alias atssh='ssh -i ~/.ssh/atfreaks/id_rsa'
