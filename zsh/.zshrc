@@ -7,7 +7,7 @@ export LANG=ja_JP.UTF-8
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export GOPATH="$HOME/go"
-export PATH="/Users/ryota/anaconda/bin:$PATH"
+export PATH="$PATH:$GOPATH/bin"
 
 #init
 if [ -d $HOME/.anyenv ] ; then
@@ -15,7 +15,7 @@ if [ -d $HOME/.anyenv ] ; then
     eval "$(anyenv init -)"
     for D in `ls $HOME/.anyenv/envs`
    do
-        export PATH="$HOME/.anyenv/envs/$D/shims:$PATH"
+        export PATH="$HOME/.anyenv/envs/${D}shims:$PATH"
    done
 fi
 
@@ -130,8 +130,8 @@ bindkey '^R' history-incremental-pattern-search-backward
 ########################################
 # エイリアス
 
-alias ll='ls -l'
-alias la='ls -a'
+alias ll='ls -lh'
+alias la='ls -alh'
 
 alias rm='rm -i'
 alias cp='cp -i'
@@ -167,6 +167,8 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
     alias -g C='| putclip'
 fi
+
+alias brew="env PATH=${${PATH/\/Users\/ryota\/anaconda\/bin:/}/\/Users\/ryota\/.anyenv\/envs\/pyenv\/shims:/} brew"
 
 # 補完
 # for zsh-completions
