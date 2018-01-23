@@ -7,6 +7,8 @@ set expandtab
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
+inoremap <silent> jj <ESC>
+inoremap <silent> っj <ESC>
 
 set runtimepath+=~/.vim/bundle/neobundle.vim/
 call neobundle#begin(expand('~/.vim/bundle/'))
