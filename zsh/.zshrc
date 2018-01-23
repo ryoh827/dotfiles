@@ -23,8 +23,8 @@ fi
 autoload -Uz colors
 colors
 
-# emacs 風キーバインドにする
-bindkey -e
+# vim 風キーバインドにする
+bindkey -v
 
 # ヒストリの設定
 HISTFILE=~/.zsh_history
@@ -32,8 +32,6 @@ HISTSIZE=1000000
 SAVEHIST=1000000
 
 # プロンプト
-# 1行表示
-# PROMPT="%~ %# "
 # 2行表示
 PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
 %# "
@@ -168,7 +166,7 @@ elif which putclip >/dev/null 2>&1 ; then
     alias -g C='| putclip'
 fi
 
-alias brew="env PATH=${${PATH/\/Users\/ryota\/anaconda\/bin:/}/\/Users\/ryota\/.anyenv\/envs\/pyenv\/shims:/} brew"
+#alias brew="env PATH=${${PATH/\/Users\/ryota\/anaconda\/bin:/}/\/Users\/ryota\/.anyenv\/envs\/pyenv\/shims:/} brew"
 
 # 補完
 # for zsh-completions
