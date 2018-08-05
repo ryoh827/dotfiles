@@ -8,6 +8,13 @@ export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin"
+export PATH="/usr/local/opt/icu4c/bin:$PATH"
+export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+export PATH="/usr/local/opt/php@7.1/bin:$PATH"
+export PATH="/usr/local/opt/php@7.1/sbin:$PATH"
+export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
+
+export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
 
 #init
 if [ -d $HOME/.anyenv ] ; then
@@ -33,9 +40,10 @@ SAVEHIST=1000000
 
 # プロンプト
 # 2行表示
-PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-%# "
-
+#PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
+#%# "
+autoload -U promptinit; promptinit
+prompt pure
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -67,17 +75,17 @@ zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 ########################################
 # vcs_info
-autoload -Uz vcs_info
-autoload -Uz add-zsh-hook
+#autoload -Uz vcs_info
+#autoload -Uz add-zsh-hook
 
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
+#zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
+#zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
 
-function _update_vcs_info_msg() {
-    LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
-}
-add-zsh-hook precmd _update_vcs_info_msg
+#function _update_vcs_info_msg() {
+#    LANG=en_US.UTF-8 vcs_info
+#    RPROMPT="${vcs_info_msg_0_}"
+#}
+#add-zsh-hook precmd _update_vcs_info_msg
 
 
 ########################################
@@ -127,6 +135,7 @@ bindkey '^R' history-incremental-pattern-search-backward
 
 ########################################
 # エイリアス
+alias vim='nvim'
 
 alias ll='ls -lh'
 alias la='ls -alh'
@@ -138,6 +147,9 @@ alias mv='mv -i'
 alias mkdir='mkdir -p'
 
 alias diff='diff -u'
+if [[ -x `which colordiff` ]]; then
+  alias diff='colordiff -u'
+fi
 
 alias h='history'
 
@@ -181,7 +193,8 @@ case ${OSTYPE} in
     darwin*)
         #Mac用の設定
         export CLICOLOR=1
-        export LSCOLORS=gxfxcxdxbxegexabagacad
+        #export LSCOLORS=gxfxcxdxbxegexabagacad
+        export LSCOLORS=gxfxcxdxbxegedabagacfd
         alias ls='ls -G -F'
         ;;
     linux*)
