@@ -14,7 +14,6 @@ export PATH="/usr/local/opt/php@7.1/bin:$PATH"
 export PATH="/usr/local/opt/php@7.1/sbin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 
-export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
 
 #init
 if [ -d $HOME/.anyenv ] ; then
@@ -37,13 +36,6 @@ bindkey -v
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
-
-# プロンプト
-# 2行表示
-#PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-#%# "
-autoload -U promptinit; promptinit
-prompt pure
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -196,9 +188,14 @@ case ${OSTYPE} in
         #export LSCOLORS=gxfxcxdxbxegexabagacad
         export LSCOLORS=gxfxcxdxbxegedabagacfd
         alias ls='ls -G -F'
+        export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
+        autoload -U promptinit; promptinit
+        prompt pure
         ;;
     linux*)
         #Linux用の設定
         alias ls='ls -F --color=auto'
+        PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
+%# "
         ;;
 esac
