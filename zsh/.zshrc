@@ -13,7 +13,7 @@ export PATH="/usr/local/opt/icu4c/sbin:$PATH"
 export PATH="/usr/local/opt/php@7.1/bin:$PATH"
 export PATH="/usr/local/opt/php@7.1/sbin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
-
+export PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
 
 #init
 if [ -d $HOME/.anyenv ] ; then
