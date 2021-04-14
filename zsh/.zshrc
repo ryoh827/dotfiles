@@ -117,7 +117,6 @@ bindkey '^R' history-incremental-pattern-search-backward
 
 ########################################
 # エイリアス
-alias vim='nvim'
 
 alias ll='ls -lh'
 alias la='ls -alh'
@@ -179,6 +178,7 @@ case ${OSTYPE} in
         # alias
         alias ls='ls -G -F'
         alias rm="trash"
+        alias vim='nvim'
 
         export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
         [[ -s "/Users/ryoh/.gvm/scripts/gvm" ]] && source "/Users/ryoh/.gvm/scripts/gvm"
@@ -202,6 +202,18 @@ case ${OSTYPE} in
         }
         zle -N peco-select-history
         bindkey '^r' peco-select-history
+
+        function peco-src () {
+          local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
+          if [ -n "$selected_dir" ]; then
+            BUFFER="cd ${selected_dir}"
+            zle accept-line
+          fi
+          zle clear-screen
+        }
+        zle -N peco-src
+        bindkey '^G' peco-src
+
         ;;
     linux*)
         #Linux用の設定
