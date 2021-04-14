@@ -6,24 +6,11 @@
 export LANG=ja_JP.UTF-8
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
-export GOPATH="$HOME/go"
-export PATH="$PATH:$GOPATH/bin"
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export PATH="/usr/local/opt/php@7.1/bin:$PATH"
-export PATH="/usr/local/opt/php@7.1/sbin:$PATH"
-export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 export PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
 
-#init
-if [ -d $HOME/.anyenv ] ; then
-    export PATH="$HOME/.anyenv/bin:$PATH"
-    eval "$(anyenv init -)"
-    for D in `ls $HOME/.anyenv/envs`
-    do
-        export PATH="$HOME/.anyenv/envs/$D/shims:$PATH"
-    done
-fi
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -108,6 +95,9 @@ setopt share_history
 # 同じコマンドをヒストリに残さない
 setopt hist_ignore_all_dups
 
+# コマンドを随時追加する
+setopt inc_append_history
+
 # スペースから始まるコマンド行はヒストリに残さない
 setopt hist_ignore_space
 
@@ -144,8 +134,6 @@ if [[ -x `which colordiff` ]]; then
 fi
 
 alias h='history'
-
-alias rm="trash"
 
 alias atssh='ssh -i ~/.ssh/atfreaks/id_rsa'
 alias atscp='scp -i ~/.ssh/atfreaks/id_rsa'
@@ -187,10 +175,33 @@ case ${OSTYPE} in
         export CLICOLOR=1
         #export LSCOLORS=gxfxcxdxbxegexabagacad
         export LSCOLORS=gxfxcxdxbxegedabagacfd
+        
+        # alias
         alias ls='ls -G -F'
+        alias rm="trash"
+
         export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
+        [[ -s "/Users/ryoh/.gvm/scripts/gvm" ]] && source "/Users/ryoh/.gvm/scripts/gvm"
+        export GOPATH="$HOME/work/go"
+        export PATH="$PATH:$GOPATH/bin"
+        export GO111MODULE=on
+        export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+        export PATH="/opt/homebrew/bin:$PATH"
+        export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
+        export PATH="$(brew --prefix readline)/bin:$PATH"
+
+        eval "$(anyenv init -)"
+
         autoload -U promptinit; promptinit
         prompt pure
+
+        function peco-select-history() {
+            BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
+            CURSOR=$#BUFFER
+            zle clear-screen
+        }
+        zle -N peco-select-history
+        bindkey '^r' peco-select-history
         ;;
     linux*)
         #Linux用の設定
@@ -199,3 +210,4 @@ case ${OSTYPE} in
 %# "
         ;;
 esac
+
