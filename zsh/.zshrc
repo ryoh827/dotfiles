@@ -1,3 +1,5 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 # License : MIT
 # http://mollifier.mit-license.org/
 
@@ -189,8 +191,13 @@ case ${OSTYPE} in
         export PATH="/opt/homebrew/bin:$PATH"
         export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
         export PATH="$(brew --prefix readline)/bin:$PATH"
+        export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+        export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
+        export CPPFLAGS="-I/opt/homebrew/opt/libedit/include"
+        export PKG_CONFIG_PATH="/opt/homebrew/opt/libedit/lib/pkgconfig"
 
         eval "$(anyenv init -)"
+        [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
         autoload -U promptinit; promptinit
         prompt pure
@@ -223,3 +230,13 @@ case ${OSTYPE} in
         ;;
 esac
 
+# pnpm
+export PNPM_HOME="/Users/ryoh/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
