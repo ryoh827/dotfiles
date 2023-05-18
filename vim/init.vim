@@ -14,7 +14,7 @@ if !filereadable(vimplug_exists)
   endif
   echo "Installing Vim-Plug..."
   echo ""
-  silent !\curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
   let g:not_finish_vimplug = "yes"
 
   autocmd VimEnter * PlugInstall
@@ -27,6 +27,8 @@ set number
 set numberwidth=3
 set showcmd
 set hlsearch
+set signcolumn=yes
+set nowrap
 
 set splitbelow
 set splitright
@@ -34,6 +36,10 @@ set splitright
 set expandtab
 set tabstop=2
 set shiftwidth=2
+set autoindent
+set smartindent
+set ignorecase
+set smartcase
 
 set showmatch
 set matchtime=1
@@ -41,10 +47,12 @@ set matchpairs& matchpairs+=<:>
 
 set noswapfile
 
+
 if !exists('g:vscode')
   call plug#begin(expand('~/.config/nvim/plugged'))
 
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/playground'
   Plug 'github/copilot.vim'
   Plug 'easymotion/vim-easymotion'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -56,6 +64,10 @@ if !exists('g:vscode')
   "Plug 'pangloss/vim-javascript'
   "Plug 'leafgarland/typescript-vim'
   "Plug 'peitalin/vim-jsx-typescript'
+  Plug 'maxmellon/vim-jsx-pretty'
+  Plug 'kylechui/nvim-surround'
+  Plug 'crispgm/nvim-tabline'
+  Plug 'ConradIrwin/vim-bracketed-paste'
 
   call plug#end()
 
@@ -67,7 +79,7 @@ if !exists('g:vscode')
     highlight = {
       enable = true,
       additional_vim_regex_highlighting = false, -- catpuucin用
-      disable = {},
+      disable = {}
     },
     indent = {
       enable = true,--言語に応じた自動インデントを有効化
@@ -77,15 +89,20 @@ if !exists('g:vscode')
       enable = true,
     },
   }
-
+  require("nvim-surround").setup {}
+  require('tabline').setup {
+    show_icon = true,
+  }
 EOF
 
   " Color Scheme
   syntax enable
-  colorscheme nightfox
+  colorscheme duskfox
+  set cursorline
 
 	"Coc Plugins
 	let g:coc_global_extensions = [	
+        \'coc-diagnostic',
         \'coc-lists', 
         \'coc-json',	
         \'coc-git',	
@@ -101,18 +118,45 @@ EOF
         \'coc-vimlsp',
         \'coc-lua',
         \'coc-highlight',
-        \'coc-nav',
         \'coc-tailwindcss'
   \]
   " Coc Settings
   inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                                 \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-  
+  " GoTo code navigation
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+ 
+  " Use K to show documentation in preview window
+  nnoremap <silent> K :call ShowDocumentation()<CR>
+
+  function! ShowDocumentation()
+    if CocAction('hasProvider', 'hover')
+      call CocActionAsync('doHover')
+    else
+      call feedkeys('K', 'in')
+    endif
+  endfunction
+  " Symbol renaming
+  nmap <leader>rn <Plug>(coc-rename)
+
+  nnoremap <C-p> :CocList files<CR>
+  nnoremap <C-m> :CocList mru<CR>
+
   set cmdheight=2
   set updatetime=300
+
+  augroup php
+    autocmd!
+    autocmd BufEnter,BufReadPre *.php setlocal syntax=php.javascript.jsx
+  augroup END
+
   
   " Move between windows
   nnoremap <Return><Return> <c-w><c-w>
+  inoremap <silent> jj <ESC>
 
   let mapleader="\<Space>"
   map <Leader> <Plug>(easymotion-prefix)
@@ -121,6 +165,8 @@ EOF
 
   nmap <space>e <Cmd>CocCommand explorer<CR>
   
+  setlocal formatoptions-=r
+  setlocal formatoptions-=o
 else
   " Required:
   call plug#begin(expand('~/.config/nvim/plugged'))
