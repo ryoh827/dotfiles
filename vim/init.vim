@@ -69,6 +69,11 @@ if !exists('g:vscode')
   Plug 'kylechui/nvim-surround'
   Plug 'crispgm/nvim-tabline'
   Plug 'ConradIrwin/vim-bracketed-paste'
+  Plug 'Ryoh827/rufo-vim'
+  Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+  Plug 'jiangmiao/auto-pairs'
+  Plug 'tpope/vim-commentary'
+  Plug 'preservim/tagbar'
 
   call plug#end()
 
@@ -100,6 +105,8 @@ EOF
   syntax enable
   colorscheme duskfox
   set cursorline
+  " Enable rufo (RUby Format)
+  let g:rufo_auto_formatting = 1
 
 	"Coc Plugins
 	let g:coc_global_extensions = [	
@@ -141,8 +148,6 @@ EOF
       call feedkeys('K', 'in')
     endif
   endfunction
-  " Symbol renaming
-  nmap <leader>rn <Plug>(coc-rename)
 
   nnoremap <C-p> :CocList files<CR>
   nnoremap <C-m> :CocList mru<CR>
@@ -169,6 +174,9 @@ EOF
 
   nmap <Leader>f [fzf-p]
   xmap <Leader>f [fzf-p]
+
+  " Symbol renaming
+  nmap <leader>rn <Plug>(coc-rename)
 
   nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
   nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
