@@ -74,6 +74,7 @@ if !exists('g:vscode')
   Plug 'jiangmiao/auto-pairs'
   Plug 'tpope/vim-commentary'
   Plug 'preservim/tagbar'
+  Plug 'tpope/vim-fugitive'
 
   call plug#end()
 
@@ -103,7 +104,7 @@ EOF
 
   " Color Scheme
   syntax enable
-  colorscheme duskfox
+  colorscheme nightfox
   set cursorline
   " Enable rufo (RUby Format)
   let g:rufo_auto_formatting = 1
@@ -148,6 +149,9 @@ EOF
       call feedkeys('K', 'in')
     endif
   endfunction
+
+  "terminal keymapping
+  tnoremap <Esc> <C-\><C-n>
 
   nnoremap <C-p> :CocList files<CR>
   nnoremap <C-m> :CocList mru<CR>
@@ -194,6 +198,12 @@ EOF
   nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
   nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
   
+  "vim-fugitive
+  nnoremap <leader>gp :Git push<CR>
+  
+  "Tig
+  nnoremap <leader>gt :te tig<CR>
+
   au FileType * setlocal formatoptions-=ro
 else
   " Required:
