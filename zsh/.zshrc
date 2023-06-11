@@ -8,11 +8,6 @@
 export LANG=ja_JP.UTF-8
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
-
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -146,6 +141,9 @@ alias sudo='sudo '
 alias -g L='| less'
 alias -g G='| grep'
 
+# vim to nvim
+alias vim='nvim'
+
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
 if which pbcopy >/dev/null 2>&1 ; then
@@ -176,11 +174,15 @@ case ${OSTYPE} in
         export CLICOLOR=1
         #export LSCOLORS=gxfxcxdxbxegexabagacad
         export LSCOLORS=gxfxcxdxbxegedabagacfd
+        export PATH="/usr/local/opt/icu4c/bin:$PATH"
+        export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+        export PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
+
+        eval "$(/opt/homebrew/bin/brew shellenv)"
         
         # alias
         alias ls='ls -G -F'
         alias rm="trash"
-        alias vim='nvim'
 
         export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
         [[ -s "/Users/ryoh/.gvm/scripts/gvm" ]] && source "/Users/ryoh/.gvm/scripts/gvm"
@@ -221,22 +223,27 @@ case ${OSTYPE} in
         zle -N peco-src
         bindkey '^G' peco-src
 
+        # pnpm
+        export PNPM_HOME="/Users/ryoh/Library/pnpm"
+        case ":$PATH:" in
+          *":$PNPM_HOME:"*) ;;
+          *) export PATH="$PNPM_HOME:$PATH" ;;
+        esac
+        # pnpm end
+        # Fig post block. Keep at the bottom of this file.
+        [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
         ;;
     linux*)
         #Linux用の設定
         alias ls='ls -F --color=auto'
         PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
 %# "
+        . "$HOME/.asdf/asdf.sh"
+        # append completions to fpath
+        fpath=(${ASDF_DIR}/completions $fpath)
+        # initialise completions with ZSH's compinit
+        autoload -Uz compinit && compinit
         ;;
 esac
 
-# pnpm
-export PNPM_HOME="/Users/ryoh/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
 
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
