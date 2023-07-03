@@ -151,7 +151,7 @@ EOF
   endfunction
 
   "terminal keymapping
-  tnoremap <Esc> <C-\><C-n>
+  tnoremap <C-q> <C-\><C-n>
 
   nnoremap <C-p> :CocList files<CR>
   nnoremap <C-m> :CocList mru<CR>
@@ -161,6 +161,7 @@ EOF
 
   augroup php
     autocmd!
+    autocmd BufEnter,BufReadPre *.php set filetype=php.javascript.jsx
     autocmd BufEnter,BufReadPre *.php setlocal syntax=php.javascript.jsx
   augroup END
 
@@ -201,8 +202,10 @@ EOF
   "vim-fugitive
   nnoremap <leader>gp :Git push<CR>
   
-  "Tig
-  nnoremap <leader>gt :te tig<CR>
+  "Terminal
+  command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
+  "autocmd TermOpen * startinsert
+  nnoremap <leader>gt :T tig<CR>
 
   au FileType * setlocal formatoptions-=ro
 else
