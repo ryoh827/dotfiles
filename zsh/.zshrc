@@ -201,8 +201,9 @@ case ${OSTYPE} in
         eval "$(anyenv init -)"
         [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
-        autoload -U promptinit; promptinit
-        prompt pure
+        #autoload -U promptinit; promptinit
+        #prompt pure
+        eval "$(starship init zsh)"
 
         function peco-select-history() {
             BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")

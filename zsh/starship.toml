@@ -1,0 +1,14 @@
+[directory]
+truncation_length = 100
+truncate_to_repo = false
+
+[memory_usage]
+disabled = false
+threshold = -1
+style = "bold dimmed blue"
+
+[docker_context]
+disabled = true
+
+[character]
+success_symbol="🦊"
