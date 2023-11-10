@@ -233,6 +233,10 @@ case ${OSTYPE} in
         # pnpm end
         # Fig post block. Keep at the bottom of this file.
         [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+
+        # タブ名をカレントデュレクトリにする
+        function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
+
         ;;
     linux*)
         #Linux用の設定
