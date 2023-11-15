@@ -9,8 +9,4 @@ return {
   --     require("lsp_signature").setup()
   --   end,
   -- },
-
-  -- Nighfox
-
-  { "EdenEast/nightfox.nvim" }
 }
