@@ -10,6 +10,11 @@ return {
   --   end,
   -- },
   {
-    "itchyny/vim-qfedit"
-  }
+    "itchyny/vim-qfedit",
+    event = "VeryLazy"
+  },
+  {
+    "ruanyl/vim-gh-line",
+    event = "VeryLazy",
+  },
 }

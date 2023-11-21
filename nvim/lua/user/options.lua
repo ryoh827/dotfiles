@@ -18,6 +18,14 @@ return {
     icons_enabled = true, -- disable icons in the UI (disable if no nerd font is available, requires :PackerSync after changing)
     ui_notifications_enabled = true, -- disable notifications when toggling UI elements
     resession_enabled = false, -- enable experimental resession.nvim session management (will be default in AstroNvim v4)
+    gitblame_date_format = '%r', -- set the date format for gitblame
+
+    -- vim-gh-line
+    gh_line_map_default = 0,
+    gh_line_blame_map_default = 0,
+    gh_line_map = '<leader>gH',
+    gh_line_blame_map = '<leader>gB',
+    gh_open_command = 'fn() { echo "$@" | pbcopy; }; fn '
   },
 }
 -- If you need more control, you can use the function()...end notation
