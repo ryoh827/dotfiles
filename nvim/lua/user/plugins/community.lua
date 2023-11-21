@@ -10,4 +10,18 @@ return {
   { import = "astrocommunity.completion.copilot-lua" },
   { import = 'astrocommunity.editing-support.nvim-treesitter-endwise' },
   { import = 'astrocommunity.motion.mini-surround' },
+  { import = 'astrocommunity.git.git-blame-nvim' },
+  {
+    "zbirenbaum/copilot.lua",
+    opts = {
+      suggestion = {
+        keymap = {
+          accept = "<C-l>",
+          next = "<C-.>",
+          prev = "<C-,>",
+        }
+      }
+    }
+  },
+  { import = 'astrocommunity.motion.hop-nvim' }
 }
