@@ -5,7 +5,6 @@ truncate_to_repo = false
 [memory_usage]
 disabled = false
 threshold = -1
-style = "bold dimmed blue"
 
 [docker_context]
 disabled = true
@@ -17,3 +16,25 @@ vimcmd_symbol="🦊"
 vimcmd_replace_one_symbol="🦊"
 vimcmd_replace_symbol="🦊"
 vimcmd_visual_symbol="🦊"
+
+[battery]
+full_symbol = "• "
+charging_symbol = "⇡ "
+discharging_symbol = "⇣ "
+unknown_symbol = "❓ "
+empty_symbol = "❗ "
+
+[erlang]
+symbol = "ⓔ "
+
+[nodejs]
+symbol = "[⬢](bold green) "
+
+[pulumi]
+symbol = "🧊 "
+
+[typst]
+symbol = "t "
+
+[git_branch]
+symbol = '🌱 '

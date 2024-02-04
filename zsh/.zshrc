@@ -179,13 +179,13 @@ case ${OSTYPE} in
         export PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
 
         eval "$(/opt/homebrew/bin/brew shellenv)"
+        eval "$(direnv hook zsh)"
         
         # alias
         alias ls='ls -G -F'
         alias rm="trash"
 
         export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
-        [[ -s "/Users/ryoh/.gvm/scripts/gvm" ]] && source "/Users/ryoh/.gvm/scripts/gvm"
         export GOPATH="$HOME/work/go"
         export PATH="$PATH:$GOPATH/bin"
         export GO111MODULE=on
@@ -193,6 +193,7 @@ case ${OSTYPE} in
         export PATH="/opt/homebrew/bin:$PATH"
         export PATH="$(brew --prefix openssl@1.1)/bin:$PATH"
         export PATH="$(brew --prefix readline)/bin:$PATH"
+        export PATH="/Users/ryoh827/bin:$PATH"
         export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
         export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/libedit/include"
@@ -225,14 +226,21 @@ case ${OSTYPE} in
         bindkey '^G' peco-src
 
         # pnpm
-        export PNPM_HOME="/Users/ryoh/Library/pnpm"
+        export PNPM_HOME="/Users/ryoh827/Library/pnpm"
         case ":$PATH:" in
           *":$PNPM_HOME:"*) ;;
           *) export PATH="$PNPM_HOME:$PATH" ;;
         esac
         # pnpm end
+        
         # Fig post block. Keep at the bottom of this file.
         [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+
+        # plugins config
+        source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+        # asdf
+        . $(brew --prefix asdf)/libexec/asdf.sh
 
         # タブ名をカレントデュレクトリにする
         function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
