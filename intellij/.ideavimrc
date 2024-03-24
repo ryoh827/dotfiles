@@ -1,0 +1,22 @@
+" Plugins
+set surround
+set easymotion
+
+" 現在のモードをステータスバーに表示
+set showmode
+
+" 検索で大文字小文字を区別しない
+set ignorecase
+set smartcase
+
+" インクリメンタル検索
+set incsearch
+
+" 最後まで検索したら最初に戻る
+set wrapscan
+
+" 検索結果をハイライト
+set hlsearch
+
+" yankをクリップボードにコピーする
+set clipboard+=unnamedplus
