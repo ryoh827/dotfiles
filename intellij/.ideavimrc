@@ -2,6 +2,9 @@
 set surround
 set easymotion
 
+" set <leader> to <space>
+let mapleader = " "
+
 " 現在のモードをステータスバーに表示
 set showmode
 
@@ -20,3 +23,10 @@ set hlsearch
 
 " yankをクリップボードにコピーする
 set clipboard+=unnamedplus
+
+" mappings
+nmap [c <Action>(VcsShowPrevChangeMarker)
+nmap ]c <Action>(VcsShowNextChangeMarker)
+
+nmap [q <Action>(GotoPreviousError)
+nmap ]q <Action>(GotoNextError)
