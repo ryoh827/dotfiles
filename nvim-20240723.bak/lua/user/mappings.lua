@@ -9,14 +9,14 @@ return {
     -- second key is the lefthand side of the map
 
     -- navigate buffer tabs with `H` and `L`
-    -- L = {
-    --   function() require("astronvim.utils.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
-    --   desc = "Next buffer",
-    -- },
-    -- H = {
-    --   function() require("astronvim.utils.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
-    --   desc = "Previous buffer",
-    -- },
+    L = {
+      function() require("astronvim.utils.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
+      desc = "Next buffer",
+    },
+    H = {
+      function() require("astronvim.utils.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
+      desc = "Previous buffer",
+    },
 
     -- mappings seen under group name "Buffer"
     ["<leader>bD"] = {
@@ -30,8 +30,21 @@ return {
     -- tables with the `name` key will be registered with which-key if it's installed
     -- this is useful for naming menus
     ["<leader>b"] = { name = "Buffers" },
+    -- overwrite horizontal terminal
+    ["<leader>th"] = { "<cmd>ToggleTerm size=20 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" },
     -- quick save
     -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
+    ["<leader>gT"] = {
+      function()
+        if vim.g.gh_use_canonical == 1 then
+          vim.g.gh_use_canonical = 0
+        else
+          vim.g.gh_use_canonical = 1
+        end
+        print("gh_use_canonical is now set to " .. vim.g.gh_use_canonical)
+      end,
+      desc = "Toggle gh canonical",
+    }
   },
   t = {
     -- setting a mapping to false will disable it

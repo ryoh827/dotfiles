@@ -104,7 +104,7 @@ EOF
 
   " Color Scheme
   syntax enable
-  colorscheme nightfox
+  colorscheme duskfox
   set cursorline
   " Enable rufo (RUby Format)
   let g:rufo_auto_formatting = 1

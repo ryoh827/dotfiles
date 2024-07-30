@@ -17,4 +17,20 @@ return {
     "ruanyl/vim-gh-line",
     event = "VeryLazy",
   },
+  {
+    "kamykn/spelunker.vim",
+    event = "VeryLazy",
+  },
+  {
+    "wakatime/vim-wakatime",
+    event = "VeryLazy",
+  },
+  {
+    "skanehira/preview-markdown.vim",
+    event = "VeryLazy",
+  },
+  {
+    "chrisbra/csv.vim",
+    event = "VeryLazy",
+  }
 }

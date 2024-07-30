@@ -25,7 +25,8 @@ return {
     gh_line_blame_map_default = 0,
     gh_line_map = '<leader>gH',
     gh_line_blame_map = '<leader>gB',
-    gh_open_command = 'fn() { echo "$@" | pbcopy; }; fn '
+    gh_open_command = 'fn() { echo "$@" | pbcopy; }; fn ',
+    gh_use_canonical = 1
   },
 }
 -- If you need more control, you can use the function()...end notation

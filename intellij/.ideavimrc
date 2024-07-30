@@ -1,6 +1,8 @@
 " Plugins
 set surround
 set easymotion
+set highlightedyank
+set textobj-entire
 
 " set <leader> to <space>
 let mapleader = " "

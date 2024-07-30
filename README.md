@@ -3,7 +3,7 @@ dotfileの管理用
 
 # 使い方
 ```
-git clone https://github.com/peta727/.dotfiles.git ~/.dotfiles
-ln -snfv ~/.dotfiles/zsh/.zshrc ~/.zshrc
-ln -snfv ~/.dotfiles/vim/.vimrc ~/.vimrc
+ghq get git@github.com:ryoh827/dotfiles.git
+ln -snfv ~/ghq/github.com/Ryoh827/dotfiles/zsh/.zshrc ~/.zshrc
+ln -snfv ~/ghq/github.com/Ryoh827/dotfiles/vim/.vimrc ~/.vimrc
 ```

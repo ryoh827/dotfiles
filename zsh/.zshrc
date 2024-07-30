@@ -157,8 +157,6 @@ elif which putclip >/dev/null 2>&1 ; then
     alias -g C='| putclip'
 fi
 
-#alias brew="env PATH=${${PATH/\/Users\/ryota\/anaconda\/bin:/}/\/Users\/ryota\/.anyenv\/envs\/pyenv\/shims:/} brew"
-
 # 補完
 # for zsh-completions
 fpath=(/usr/local/share/zsh-completions $fpath)
@@ -186,21 +184,17 @@ case ${OSTYPE} in
         alias rm="trash"
 
         export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
-        export GOPATH="$HOME/work/go"
-        export PATH="$PATH:$GOPATH/bin"
         export GO111MODULE=on
         export PATH="/opt/homebrew/opt/openssl/bin:$PATH"
         export PATH="/opt/homebrew/bin:$PATH"
         export PATH="$(brew --prefix openssl)/bin:$PATH"
         export PATH="$(brew --prefix readline)/bin:$PATH"
         export PATH="/Users/ryoh827/bin:$PATH"
+	export PATH="$(go env GOPATH)/bin:$PATH"
         export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl)"
-        export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
+        # export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/libedit/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/libedit/lib/pkgconfig"
-
-        eval "$(anyenv init -)"
-        [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
         #autoload -U promptinit; promptinit
         #prompt pure
