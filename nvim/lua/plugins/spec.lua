@@ -10,7 +10,18 @@ return {
     end
   },
   {
-    "cocopon/iceberg.vim",
-    event = "VeryLazy",
-  }
+    "cocopon/iceberg.vim"
+  },
+  {
+    "vim-airline/vim-airline"
+  },
+  {
+    "vim-airline/vim-airline-themes"
+  },
+  {
+    'preservim/nerdtree',
+  },
+  {
+    'easymotion/vim-easymotion',
+  },
 }

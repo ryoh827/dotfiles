@@ -8,6 +8,14 @@ local options = {
   title = true,
   backup = false,
   clipboard = "unnamedplus",
+  expandtab = true,
+  tabstop = 2,
+  shiftwidth = 2,
+  ignorecase = true,
+  smartcase = true,
+  incsearch = true,
+  wrapscan = true,
+  hlsearch = true,
 }
 
 for k, v in pairs(options) do
