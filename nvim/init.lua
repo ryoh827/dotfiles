@@ -24,4 +24,11 @@ end
 
 require("config.lazy")
 vim.opt.termguicolors = true
-vim.cmd 'colorscheme iceberg'
+vim.cmd 'colorscheme dracula'
+
+local home_dir = os.getenv("HOME")
+package.path = home_dir .. '/.config/nvim/' .. package.path
+
+require("keymaps")
+require("lsps")
+

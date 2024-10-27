@@ -9,19 +9,57 @@ return {
         })
     end
   },
+  { "vim-airline/vim-airline" },
+  { "vim-airline/vim-airline-themes" },
+  { 'preservim/nerdtree' },
+  { 'easymotion/vim-easymotion' },
+  { "Mofiqul/dracula.nvim" },
   {
-    "cocopon/iceberg.vim"
+    'stevearc/oil.nvim',
+    opts = {},
+    dependencies = {{"echasnovski/mini.icons", opts = {}}},
+    config = function()
+      require('oil').setup({
+        view_options = {
+          show_hidden = true,
+        }
+      })
+    end,
   },
   {
-    "vim-airline/vim-airline"
+    'akinsho/bufferline.nvim',
+    version = "*",
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    config = function()
+      require("bufferline").setup{}
+    end,
   },
   {
-    "vim-airline/vim-airline-themes"
+   "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {{
+      "<leader>?",
+      function() require("which-key").show({global = false}) end,
+      desc = "Buffer Local Keymaps (which-key)",
+    }},
   },
+  {"neovim/nvim-lspconfig"},
+  {'github/copilot.vim'},
+  {'tpope/vim-endwise'},
   {
-    'preservim/nerdtree',
+    'Wansmer/treesj',
+    keys = { '<space>m', '<space>j', '<space>s' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' }, 
+    config = function()
+      require('treesj').setup({})
+    end,
   },
+  {'monaqa/dial.nvim'},
   {
-    'easymotion/vim-easymotion',
-  },
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup()
+    end,
+  }
 }
