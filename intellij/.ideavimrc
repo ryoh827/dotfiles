@@ -32,3 +32,5 @@ nmap ]c <Action>(VcsShowNextChangeMarker)
 
 nmap [q <Action>(GotoPreviousError)
 nmap ]q <Action>(GotoNextError)
+
+nmap gh <Action>(ShowHoverInfo)
