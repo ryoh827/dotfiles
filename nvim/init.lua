@@ -16,6 +16,8 @@ local options = {
   incsearch = true,
   wrapscan = true,
   hlsearch = true,
+  foldmethod = "syntax",
+  foldlevel = 10,
 }
 
 for k, v in pairs(options) do
@@ -31,4 +33,6 @@ package.path = home_dir .. '/.config/nvim/' .. package.path
 
 require("keymaps")
 require("lsps")
+
+vim.g.memolist_path = home_dir .. "/Documents/Memo"
 

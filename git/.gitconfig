@@ -5,13 +5,15 @@
 	autoSetupRemote = true
 [core]
 	editor = nvim
-
+  ignorecase = false
+[diff]
+  algorithm = histogram
+  submodule = log
 [tig "bind"]
   diff = F ?!git commit --fixup %(commit)
   diff = S ?!git commit --squash %(commit)
   main = F ?!git commit --fixup %(commit)
   main = S ?!git commit --squash %(commit)
-
 [alias]
   br = branch
   sh = switch

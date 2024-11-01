@@ -9,6 +9,7 @@ return {
         })
     end
   },
+  { "glidenote/memolist.vim" },
   { "vim-airline/vim-airline" },
   { "vim-airline/vim-airline-themes" },
   { 'preservim/nerdtree' },
@@ -49,10 +50,11 @@ return {
   {'tpope/vim-endwise'},
   {
     'Wansmer/treesj',
-    keys = { '<space>m', '<space>j', '<space>s' },
     dependencies = { 'nvim-treesitter/nvim-treesitter' }, 
     config = function()
-      require('treesj').setup({})
+      require('treesj').setup({
+        use_default_keymaps = false
+      })
     end,
   },
   {'monaqa/dial.nvim'},
@@ -61,5 +63,16 @@ return {
     config = function()
       require('gitsigns').setup()
     end,
-  }
+  },
+  {
+    "shellRaining/hlchunk.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("hlchunk").setup({
+        indent = {
+          enable = true
+        }
+      })
+    end
+  },
 }

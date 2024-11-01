@@ -195,6 +195,8 @@ case ${OSTYPE} in
         # export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/libedit/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/libedit/lib/pkgconfig"
+        export PKG_CONFIG_PATH="/opt/homebrew/bin/pkg-config:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix curl)/lib/pkgconfig:$(brew --prefix zlib)/lib/pkgconfig:$PKG_CONFIG_PATH"
+
 
         #autoload -U promptinit; promptinit
         #prompt pure
