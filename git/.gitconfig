@@ -17,6 +17,11 @@
 [alias]
   br = branch
   sh = switch
-  shm = !git sh $(git main-branch)
-  main-branch = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+  shm = !git sh $(git mb)
+  mb = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+  rom = !git rebase $(git mb)
+  ram = !git rebase -i --autosquash $(git mb)
+  ra = !git rebase -i --autosquash
+  f = fetch
+  d = diff
 

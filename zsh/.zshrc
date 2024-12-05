@@ -48,22 +48,6 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
-
-########################################
-# vcs_info
-#autoload -Uz vcs_info
-#autoload -Uz add-zsh-hook
-
-#zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-#zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
-
-#function _update_vcs_info_msg() {
-#    LANG=en_US.UTF-8 vcs_info
-#    RPROMPT="${vcs_info_msg_0_}"
-#}
-#add-zsh-hook precmd _update_vcs_info_msg
-
-
 ########################################
 # オプション
 # 日本語ファイル名を表示可能にする
@@ -131,9 +115,6 @@ fi
 
 alias h='history'
 
-alias atssh='ssh -i ~/.ssh/atfreaks/id_rsa'
-alias atscp='scp -i ~/.ssh/atfreaks/id_rsa'
-
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
 
@@ -143,6 +124,11 @@ alias -g G='| grep'
 
 # vim to nvim
 alias vim='nvim'
+alias v='nvim'
+
+alias g='git'
+alias t='tig'
+alias m-'make'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -190,7 +176,6 @@ case ${OSTYPE} in
         export PATH="$(brew --prefix openssl)/bin:$PATH"
         export PATH="$(brew --prefix readline)/bin:$PATH"
         export PATH="/Users/ryoh827/bin:$PATH"
-	export PATH="$(go env GOPATH)/bin:$PATH"
         export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl)"
         # export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/libedit/include"
@@ -202,6 +187,7 @@ case ${OSTYPE} in
         #prompt pure
         eval "$(starship init zsh)"
 
+        # peco
         function peco-select-history() {
             BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
             CURSOR=$#BUFFER
@@ -221,16 +207,12 @@ case ${OSTYPE} in
         zle -N peco-src
         bindkey '^G' peco-src
 
-        # pnpm
-        export PNPM_HOME="/Users/ryoh827/Library/pnpm"
-        case ":$PATH:" in
-          *":$PNPM_HOME:"*) ;;
-          *) export PATH="$PNPM_HOME:$PATH" ;;
-        esac
-        # pnpm end
-        
-        # Fig post block. Keep at the bottom of this file.
-        [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+        function gr () {
+          local selected_dir=$(ghq list -p | peco --query "$LBUFFER")
+          if [ -n "$selected_dir" ]; then
+            cd ${selected_dir}
+          fi
+        }
 
         # plugins config
         source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -252,7 +234,10 @@ case ${OSTYPE} in
         fpath=(${ASDF_DIR}/completions $fpath)
         # initialise completions with ZSH's compinit
         autoload -Uz compinit && compinit
+
+        export PATH="$(go env GOPATH)/bin:$PATH"
         ;;
 esac
 
-
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
