@@ -2,3 +2,4 @@ deno 1.40.2
 ruby 3.4.0-preview1
 golang 1.22.5
 postgres 17.0
+rust 1.83.0
