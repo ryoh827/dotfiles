@@ -128,7 +128,7 @@ alias v='nvim'
 
 alias g='git'
 alias t='tig'
-alias m-'make'
+alias m='make'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -156,11 +156,7 @@ case ${OSTYPE} in
     darwin*)
         #Mac用の設定
         export CLICOLOR=1
-        #export LSCOLORS=gxfxcxdxbxegexabagacad
         export LSCOLORS=gxfxcxdxbxegedabagacfd
-        export PATH="/usr/local/opt/icu4c/bin:$PATH"
-        export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-        export PATH="/usr/local/texlive/2018/bin/x86_64-darwin:$PATH"
 
         eval "$(/opt/homebrew/bin/brew shellenv)"
         eval "$(direnv hook zsh)"
@@ -169,7 +165,6 @@ case ${OSTYPE} in
         alias ls='ls -G -F'
         alias rm="trash"
 
-        export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"
         export GO111MODULE=on
         export PATH="/opt/homebrew/opt/openssl/bin:$PATH"
         export PATH="/opt/homebrew/bin:$PATH"
@@ -177,14 +172,7 @@ case ${OSTYPE} in
         export PATH="$(brew --prefix readline)/bin:$PATH"
         export PATH="/Users/ryoh827/bin:$PATH"
         export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl)"
-        # export LDFLAGS="-L/opt/homebrew/opt/libedit/lib"
-        export CPPFLAGS="-I/opt/homebrew/opt/libedit/include"
-        export PKG_CONFIG_PATH="/opt/homebrew/opt/libedit/lib/pkgconfig"
-        export PKG_CONFIG_PATH="/opt/homebrew/bin/pkg-config:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix curl)/lib/pkgconfig:$(brew --prefix zlib)/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-
-        #autoload -U promptinit; promptinit
-        #prompt pure
         eval "$(starship init zsh)"
 
         function ghq-open() {
