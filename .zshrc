@@ -208,6 +208,7 @@ case ${OSTYPE} in
         # タブ名をカレントデュレクトリにする
         function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
 
+        export PATH="$(go env GOPATH)/bin:$PATH"
         ;;
     linux*)
         #Linux用の設定
@@ -220,7 +221,6 @@ case ${OSTYPE} in
         # initialise completions with ZSH's compinit
         autoload -Uz compinit && compinit
 
-        export PATH="$(go env GOPATH)/bin:$PATH"
         ;;
 esac
 
