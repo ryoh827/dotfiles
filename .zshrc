@@ -164,6 +164,7 @@ case ${OSTYPE} in
         # alias
         alias ls='ls -G -F'
         alias rm="trash"
+        alias b="brew"
 
         export GO111MODULE=on
         export PATH="/opt/homebrew/opt/openssl/bin:$PATH"
@@ -176,9 +177,9 @@ case ${OSTYPE} in
         eval "$(starship init zsh)"
 
         function ghq-open() {
-          local repo=$(ghq list | fzf --prompt="Select a repository: " --height=40%)
+          local repo=$(ghq list --full-path | fzf --prompt="Select a repository: " --height=40%)
           if [[ -n $repo ]]; then
-            cd "$(ghq root)/$repo" || echo "Failed to cd into repository"
+            cd "$repo" || echo "Failed to cd into repository"
           fi
         }
         alias r='ghq-open'
@@ -197,7 +198,7 @@ case ${OSTYPE} in
             echo "Not inside a Git repository."
           fi
         }
-        alias b='git-branch-switch'
+        alias br='git-branch-switch'
 
         # plugins config
         source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -208,6 +209,7 @@ case ${OSTYPE} in
         # タブ名をカレントデュレクトリにする
         function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
 
+        export GOPATH=$HOME/go
         export PATH="$(go env GOPATH)/bin:$PATH"
         ;;
     linux*)

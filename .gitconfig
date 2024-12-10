@@ -30,3 +30,6 @@
   pl  = pull
   p   = push
 
+[ghq]
+	root = /Users/ryoh827/go/src
+	root = /Users/ryoh827/ghq
