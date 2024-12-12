@@ -177,7 +177,7 @@ case ${OSTYPE} in
         eval "$(starship init zsh)"
 
         function ghq-open() {
-          local repo=$(ghq list --full-path | fzf --prompt="Select a repository: " --height=40%)
+          local repo=$(ghq list --full-path | fzf --reverse)
           if [[ -n $repo ]]; then
             cd "$repo" || echo "Failed to cd into repository"
           fi
@@ -188,7 +188,7 @@ case ${OSTYPE} in
           # 現在のディレクトリが Git リポジトリか確認
           if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
             # リモート/ローカル両方のブランチをリスト化
-            local branch=$(git branch -a --sort=-committerdate | sed 's/^[* ] //' | fzf --prompt="Select a branch: " --height=40%)
+            local branch=$(git branch -a --sort=-committerdate | sed 's/^[* ] //' | fzf --reverse)
             if [[ -n $branch ]]; then
               # リモートブランチの場合、refs/remotes/origin/ を削除
               branch=$(echo $branch | sed 's#^remotes/origin/##')
@@ -199,6 +199,14 @@ case ${OSTYPE} in
           fi
         }
         alias br='git-branch-switch'
+
+        function fzf-select-history() {
+          BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER" --reverse)
+          CURSOR=$#BUFFER
+          zle reset-prompt
+        }
+        zle -N fzf-select-history
+        bindkey '^r' fzf-select-history
 
         # plugins config
         source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
