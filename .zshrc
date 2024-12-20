@@ -109,8 +109,8 @@ alias mv='mv -i'
 alias mkdir='mkdir -p'
 
 alias diff='diff -u'
-if [[ -x `which colordiff` ]]; then
-  alias diff='colordiff -u'
+if [[ -x `which delta` ]]; then
+  alias diff='delta'
 fi
 
 alias h='history'
@@ -162,9 +162,21 @@ case ${OSTYPE} in
         eval "$(direnv hook zsh)"
         
         # alias
-        alias ls='ls -G -F'
-        alias rm="trash"
+        if [[ -x `which eza` ]]; then
+          alias ls='eza --smart-group -F'
+        else
+          alias ls='ls -G -F'
+        fi
+        if [[ -x `which trash` ]]; then
+          alias rm="trash"
+        fi
+        if [[ -x `which bat` ]]; then
+          alias cat="bat"
+        fi
         alias b="brew"
+        if [[ -x `which rg` ]]; then
+          alias grep='rg'
+        fi
 
         export GO111MODULE=on
         export PATH="/opt/homebrew/opt/openssl/bin:$PATH"

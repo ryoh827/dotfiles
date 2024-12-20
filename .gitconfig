@@ -1,23 +1,37 @@
 [user]
 	email = rn.gjt25@gmail.com
-	name = ryoh827
+	name  = ryoh827
+
 [push]
 	autoSetupRemote = true
+
 [core]
-	editor = nvim
-  ignorecase = false
-[diff]
-  algorithm = histogram
-  submodule = log
+	editor      = nvim
+  ignorecase  = false
+  pager       = delta
+
+[delta]
+  navigate     = true
+  light        = true
+  algorithm    = histogram
+  submodule    = log
+  side-by-side = true
+  line-numbers = true
+
+[interactive]
+    diffFilter = delta --color-only
+
 [tig "bind"]
   diff = F ?!git commit --fixup %(commit)
   diff = S ?!git commit --squash %(commit)
   main = F ?!git commit --fixup %(commit)
   main = S ?!git commit --squash %(commit)
+
 [alias]
   br  = branch
   sh  = switch
   c   = commit
+  co  = checkout
   dc  = !git c -m $(date +%Y-%m-%d)
   a   = add
   shm = !git sh $(git mb)
@@ -33,3 +47,7 @@
 [ghq]
 	root = /Users/ryoh827/go/src
 	root = /Users/ryoh827/ghq
+
+[merge]
+  conflictstyle = zdiff3
+
