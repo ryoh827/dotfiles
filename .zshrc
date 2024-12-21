@@ -91,12 +91,6 @@ setopt extended_glob
 setopt nonomatch
 
 ########################################
-# キーバインド
-
-# ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-# bindkey '^R' history-incremental-pattern-search-backward
-
-########################################
 # エイリアス
 
 alias ll='ls -lh'
@@ -129,6 +123,19 @@ alias v='nvim'
 alias g='git'
 alias t='tig'
 alias m='make'
+alias b="brew"
+if [[ -x `which eza` ]]; then
+  alias ls='eza --smart-group -F'
+else
+  alias ls='ls -G -F'
+fi
+if [[ -x `which bat` ]]; then
+  alias cat="bat"
+fi
+if [[ -x `which rg` ]]; then
+  alias grep='rg'
+fi
+
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -162,20 +169,8 @@ case ${OSTYPE} in
         eval "$(direnv hook zsh)"
         
         # alias
-        if [[ -x `which eza` ]]; then
-          alias ls='eza --smart-group -F'
-        else
-          alias ls='ls -G -F'
-        fi
         if [[ -x `which trash` ]]; then
           alias rm="trash"
-        fi
-        if [[ -x `which bat` ]]; then
-          alias cat="bat"
-        fi
-        alias b="brew"
-        if [[ -x `which rg` ]]; then
-          alias grep='rg'
         fi
 
         export GO111MODULE=on
@@ -234,15 +229,14 @@ case ${OSTYPE} in
         ;;
     linux*)
         #Linux用の設定
-        alias ls='ls -F --color=auto'
-        PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
-%# "
-        . "$HOME/.asdf/asdf.sh"
-        # append completions to fpath
-        fpath=(${ASDF_DIR}/completions $fpath)
-        # initialise completions with ZSH's compinit
-        autoload -Uz compinit && compinit
+        
+        # brew
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+        # starship
+        eval "$(starship init zsh)"
+
+        # alias
         ;;
 esac
 
