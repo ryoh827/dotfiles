@@ -124,18 +124,6 @@ alias g='git'
 alias t='tig'
 alias m='make'
 alias b="brew"
-if [[ -x `which eza` ]]; then
-  alias ls='eza --smart-group -F'
-else
-  alias ls='ls -G -F'
-fi
-if [[ -x `which bat` ]]; then
-  alias cat="bat"
-fi
-if [[ -x `which rg` ]]; then
-  alias grep='rg'
-fi
-
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -239,6 +227,18 @@ case ${OSTYPE} in
         # alias
         ;;
 esac
+
+if [[ -x `which eza` ]]; then
+  alias ls='eza --smart-group -F'
+else
+  alias ls='ls -G -F'
+fi
+if [[ -x `which bat` ]]; then
+  alias cat="bat"
+fi
+if [[ -x `which rg` ]]; then
+  alias grep='rg'
+fi
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
