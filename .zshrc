@@ -172,7 +172,7 @@ case ${OSTYPE} in
         eval "$(starship init zsh)"
 
         function ghq-open() {
-          local repo=$(ghq list --full-path | fzf --reverse)
+          local repo=$(ghq list --full-path | fzf --reverse --preview="ls -AF --color=always ${root}/{1}")
           if [[ -n $repo ]]; then
             cd "$repo" || echo "Failed to cd into repository"
           fi
