@@ -145,6 +145,10 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit
 compinit -u
 
+if which mise >/dev/null 2>&1 ; then
+  eval "$(mise activate zsh)"
+fi
+
 ########################################
 # OS 別の設定
 case ${OSTYPE} in
@@ -205,9 +209,6 @@ case ${OSTYPE} in
 
         # plugins config
         source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-        # asdf
-        . $(brew --prefix asdf)/libexec/asdf.sh
 
         # タブ名をカレントデュレクトリにする
         function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
