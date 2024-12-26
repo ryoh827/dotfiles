@@ -8,6 +8,8 @@
 export LANG=ja_JP.UTF-8
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
+export GOPATH=$HOME/go
+export PATH="$(go env GOPATH)/bin:$PATH"
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -175,46 +177,11 @@ case ${OSTYPE} in
 
         eval "$(starship init zsh)"
 
-        function ghq-open() {
-          local repo=$(ghq list --full-path | fzf --reverse --preview="ls -AF --color=always ${root}/{1}")
-          if [[ -n $repo ]]; then
-            cd "$repo" || echo "Failed to cd into repository"
-          fi
-        }
-        alias r='ghq-open'
-
-        function git-branch-switch() {
-          # 現在のディレクトリが Git リポジトリか確認
-          if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-            # リモート/ローカル両方のブランチをリスト化
-            local branch=$(git branch -a --sort=-committerdate | sed 's/^[* ] //' | fzf --reverse)
-            if [[ -n $branch ]]; then
-              # リモートブランチの場合、refs/remotes/origin/ を削除
-              branch=$(echo $branch | sed 's#^remotes/origin/##')
-              git checkout "$branch" || echo "Failed to switch to branch $branch"
-            fi
-          else
-            echo "Not inside a Git repository."
-          fi
-        }
-        alias br='git-branch-switch'
-
-        function fzf-select-history() {
-          BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER" --reverse)
-          CURSOR=$#BUFFER
-          zle reset-prompt
-        }
-        zle -N fzf-select-history
-        bindkey '^r' fzf-select-history
-
         # plugins config
         source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
         # タブ名をカレントデュレクトリにする
         function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
-
-        export GOPATH=$HOME/go
-        export PATH="$(go env GOPATH)/bin:$PATH"
         ;;
     linux*)
         #Linux用の設定
@@ -240,6 +207,38 @@ fi
 if [[ -x `which rg` ]]; then
   alias grep='rg'
 fi
+
+function ghq-open() {
+  local repo=$(ghq list --full-path | fzf --reverse --preview="ls -AF --color=always ${root}/{1}")
+  if [[ -n $repo ]]; then
+    cd "$repo" || echo "Failed to cd into repository"
+  fi
+}
+alias r='ghq-open'
+
+function git-branch-switch() {
+  # 現在のディレクトリが Git リポジトリか確認
+  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    # リモート/ローカル両方のブランチをリスト化
+    local branch=$(git branch -a --sort=-committerdate | sed 's/^[* ] //' | fzf --reverse)
+    if [[ -n $branch ]]; then
+      # リモートブランチの場合、refs/remotes/origin/ を削除
+      branch=$(echo $branch | sed 's#^remotes/origin/##')
+      git checkout "$branch" || echo "Failed to switch to branch $branch"
+    fi
+  else
+    echo "Not inside a Git repository."
+  fi
+}
+alias br='git-branch-switch'
+
+function fzf-select-history() {
+  BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER" --reverse)
+  CURSOR=$#BUFFER
+  zle reset-prompt
+}
+zle -N fzf-select-history
+bindkey '^r' fzf-select-history
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
