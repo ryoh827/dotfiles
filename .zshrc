@@ -9,7 +9,6 @@ export LANG=ja_JP.UTF-8
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 export GOPATH=$HOME/go
-export PATH="$(go env GOPATH)/bin:$PATH"
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -150,6 +149,9 @@ compinit -u
 if which mise >/dev/null 2>&1 ; then
   eval "$(mise activate zsh)"
 fi
+
+# 環境変数
+export PATH="$(go env GOPATH)/bin:$PATH"
 
 ########################################
 # OS 別の設定
