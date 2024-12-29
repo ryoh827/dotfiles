@@ -45,8 +45,8 @@
   p   = push
 
 [ghq]
-	root = /Users/ryoh827/go/src
-	root = /Users/ryoh827/ghq
+	root = ~/go/src
+	root = ~/ghq
 
 [merge]
   conflictstyle = zdiff3
