@@ -146,13 +146,6 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit
 compinit -u
 
-if which mise >/dev/null 2>&1 ; then
-  eval "$(mise activate zsh)"
-fi
-
-# 環境変数
-export PATH="$(go env GOPATH)/bin:$PATH"
-
 ########################################
 # OS 別の設定
 case ${OSTYPE} in
@@ -198,6 +191,14 @@ case ${OSTYPE} in
         ;;
 esac
 
+if which mise >/dev/null 2>&1 ; then
+  eval "$(mise activate zsh)"
+fi
+
+# 環境変数
+export PATH="$(go env GOPATH)/bin:$PATH"
+
+# alias
 if [[ -x `which eza` ]]; then
   alias ls='eza --smart-group -F'
 else
