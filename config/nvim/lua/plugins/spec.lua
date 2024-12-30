@@ -102,7 +102,7 @@ return {
   {
     'goolord/alpha-nvim',
     config = function ()
-        require'alpha'.setup(require'alpha.themes.dashboard'.config)
+        require'alpha'.setup(require'config.dashboard'.config)
     end
   },
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 }
