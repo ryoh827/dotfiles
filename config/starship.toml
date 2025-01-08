@@ -9,14 +9,6 @@ threshold = -1
 [docker_context]
 disabled = true
 
-[character]
-success_symbol="🐰"
-error_symbol="🐰"
-vimcmd_symbol="🐰"
-vimcmd_replace_one_symbol="🐰"
-vimcmd_replace_symbol="🐰"
-vimcmd_visual_symbol="🐰"
-
 [battery]
 disabled=true
 
