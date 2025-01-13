@@ -17,6 +17,7 @@ symbol = ''
 format = '[$symbol$branch]($style) '
 
 [aws]
+disabled=true
 format = '[$symbol$profile]($style) '
 style = 'bold blue'
 symbol = '🅰  '
