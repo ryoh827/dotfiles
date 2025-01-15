@@ -14,7 +14,7 @@ return {
   {
     "glidenote/memolist.vim",
     config = function()
-      vim.g.memolist_path = home_dir .. "/Documents/Memo"
+      vim.g.memolist_path = home_dir .. "/memo"
       vim.g.memolist_memo_suffix = "md"
     end
   },

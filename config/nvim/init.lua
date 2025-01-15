@@ -24,6 +24,10 @@ for k, v in pairs(options) do
 	vim.opt[k] = v
 end
 
+vim.g.copilot_filetypes = {
+  markdown = false,
+}
+
 require("config.autocmds")
 
 require("config.lazy")

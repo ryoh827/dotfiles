@@ -1,4 +1,4 @@
-memodir = "~/Documents/Memo"
+memodir = "~/memo"
 editor = "nvim"
 column = 20
 width = 0

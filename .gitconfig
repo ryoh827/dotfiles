@@ -43,7 +43,9 @@
   d   = diff
   pl  = pull
   p   = push
-  pr = !git push && gh pr create -w
+  pr  = !git push && gh pr create -w
+  st  = stash
+  s   = status
 
 [ghq]
 	root = ~/go/src
