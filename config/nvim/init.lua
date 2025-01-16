@@ -27,6 +27,7 @@ end
 vim.g.copilot_filetypes = {
   markdown = false,
 }
+vim.g.markdown_recommended_style = 0
 
 require("config.autocmds")
 

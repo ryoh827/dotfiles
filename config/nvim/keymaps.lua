@@ -32,3 +32,5 @@ vim.api.nvim_set_keymap('n', '<leader>bn', ':bnext<CR>', { noremap = true, silen
 vim.api.nvim_set_keymap('n', '<leader>bp', ':bprevious<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>bc', ':bnext<CR>:bd#<CR>', { noremap = true, silent = true })
 
+vim.keymap.set('i', '<S-Tab>', '<C-d>', { noremap = true, silent = true })
+
