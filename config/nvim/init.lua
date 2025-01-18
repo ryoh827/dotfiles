@@ -33,7 +33,7 @@ require("config.autocmds")
 
 require("config.lazy")
 vim.opt.termguicolors = true
-vim.cmd 'colorscheme catppuccin-macchiato'
+vim.cmd 'colorscheme catppuccin-frappe'
 
 local home_dir = os.getenv("HOME")
 package.path = home_dir .. '/.config/nvim/' .. package.path
