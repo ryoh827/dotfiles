@@ -12,7 +12,7 @@
 
 [delta]
   navigate     = true
-  light        = true
+  dark         = true
   algorithm    = histogram
   submodule    = log
   side-by-side = true
