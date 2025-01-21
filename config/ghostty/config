@@ -1,2 +1,6 @@
 theme = catppuccin-frappe
 
+# disable ligatures
+font-feature = -calt
+font-feature = -dlig
+
