@@ -125,6 +125,7 @@ alias g='git'
 alias t='tig'
 alias m='make'
 alias b="brew"
+alias d="docker"
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
