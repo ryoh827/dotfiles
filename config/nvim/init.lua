@@ -16,7 +16,7 @@ local options = {
   incsearch = true,
   wrapscan = true,
   hlsearch = true,
-  foldmethod = "syntax",
+  foldmethod = "indent",
   foldlevel = 10,
 }
 
