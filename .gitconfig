@@ -33,7 +33,7 @@
   sh  = switch
   c   = commit
   co  = checkout
-  dc  = !git c -m $(date +%Y-%m-%d)
+  dc  = !git c -m $(date +%Y-%m-%d %H:%M:%S)
   a   = add
   shm = !git sh $(git mb)
   mb  = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
