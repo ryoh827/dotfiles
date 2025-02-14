@@ -1,9 +1,9 @@
 vim.keymap.set("n", "<Space>go", function()
-  require("oil").open()
+  require("oil").open_float()
 end, { desc = "Oil current buffer's directory" })
 
 vim.keymap.set("n", "<Space>gO", function()
-  require("oil").open(".")
+  require("oil").open_float(".")
 end, { desc = "Oil ." })
 
 -- Telescope
