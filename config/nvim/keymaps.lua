@@ -27,10 +27,12 @@ vim.keymap.set('n', '<leader>mT', function()
 end, { desc = 'Toggle tree (recursive)' })
 
 -- buffer
-vim.api.nvim_set_keymap('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>bn', ':bnext<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>bp', ':bprevious<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>bc', ':bnext<CR>:bd#<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc='Delete buffer' })
+vim.api.nvim_set_keymap('n', '<leader>bn', ':bnext<CR>', { noremap = true, silent = true, desc='Next buffer' })
+vim.api.nvim_set_keymap('n', '<leader>bp', ':bprevious<CR>', { noremap = true, silent = true, desc='Previous buffer' })
+vim.api.nvim_set_keymap('n', '<leader>bc', ':bnext<CR>:bd#<CR>', { noremap = true, silent = true, desc='Close buffer' })
 
 vim.keymap.set('i', '<S-Tab>', '<C-d>', { noremap = true, silent = true })
+
+vim.api.nvim_set_keymap("n", "<leader>gf", ":lua vim.lsp.buf.format()<CR>", { noremap = true, silent = true, desc = "Format" })
 
