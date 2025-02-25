@@ -14,9 +14,6 @@ export GOPATH=$HOME/go
 autoload -Uz colors
 colors
 
-# vim 風キーバインドにする
-bindkey -v
-
 # ヒストリの設定
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
