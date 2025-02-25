@@ -150,7 +150,6 @@ case ${OSTYPE} in
         export LSCOLORS=gxfxcxdxbxegedabagacfd
 
         eval "$(/opt/homebrew/bin/brew shellenv)"
-        eval "$(direnv hook zsh)"
         
         # alias
         if [[ -x `which trash` ]]; then
