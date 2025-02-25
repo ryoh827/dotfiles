@@ -14,9 +14,6 @@ export GOPATH=$HOME/go
 autoload -Uz colors
 colors
 
-# vim 風キーバインドにする
-bindkey -v
-
 # ヒストリの設定
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
@@ -153,7 +150,6 @@ case ${OSTYPE} in
         export LSCOLORS=gxfxcxdxbxegedabagacfd
 
         eval "$(/opt/homebrew/bin/brew shellenv)"
-        eval "$(direnv hook zsh)"
         
         # alias
         if [[ -x `which trash` ]]; then
