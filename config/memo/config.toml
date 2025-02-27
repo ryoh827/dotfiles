@@ -1,5 +1,5 @@
 memodir = "~/memo"
-editor = "code"
+editor = "nvim"
 column = 20
 width = 0
 selectcmd = "fzf"
