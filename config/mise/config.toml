@@ -2,3 +2,6 @@
 deno = "2.1.6"
 go = "1.23.4"
 ruby = "3.5-dev"
+
+[settings]
+idiomatic_version_file_enable_tools = ["ruby"]
