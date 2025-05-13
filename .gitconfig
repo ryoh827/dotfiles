@@ -16,7 +16,7 @@
   dark         = true
   algorithm    = histogram
   submodule    = log
-  side-by-side = true
+  side-by-side = false
   line-numbers = true
 
 [interactive]
