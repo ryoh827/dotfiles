@@ -48,7 +48,7 @@
   st  = stash
   s   = status
   nb  = !git sh -c "$(date +%Y%m%d_%H%M%S)"
-  bran= !git branch -m ryoh827-$(date +%Y%m%d)-$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c 6); }
+  bran= !git sh -c ryoh827-$(date +%Y%m%d)-$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c 6); }
 
 [ghq]
 	root = ~/go/src
