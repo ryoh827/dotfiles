@@ -59,7 +59,7 @@ return {
   {'tpope/vim-endwise'},
   {
     'Wansmer/treesj',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' }, 
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       require('treesj').setup({
         use_default_keymaps = false
@@ -142,5 +142,16 @@ return {
   },
   {
     "williamboman/mason-lspconfig.nvim",
+  },
+  {
+    "navarasu/onedark.nvim",
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('onedark').setup {
+        style = 'darker'
+      }
+      -- Enable theme
+      require('onedark').load()
+    end
   }
 }

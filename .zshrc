@@ -118,7 +118,6 @@ alias vim='nvim'
 alias v='nvim'
 
 alias g='git'
-alias t='tig'
 alias m='make'
 alias b="brew"
 alias d="docker"
