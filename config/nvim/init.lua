@@ -32,8 +32,9 @@ vim.g.markdown_recommended_style = 0
 require("config.autocmds")
 
 require("config.lazy")
-vim.opt.termguicolors = true
-vim.cmd 'colorscheme dracula'
+-- vim.opt.termguicolors = true
+vim.cmd[[colorscheme dracula]]
+
 
 local home_dir = os.getenv("HOME")
 package.path = home_dir .. '/.config/nvim/' .. package.path
