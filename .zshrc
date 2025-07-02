@@ -121,6 +121,7 @@ alias g='git'
 alias m='make'
 alias b="brew"
 alias d="docker"
+alias c="claude"
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -245,3 +246,6 @@ bindkey '^r' fzf-select-history
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# Created by `pipx` on 2025-06-21 14:21:17
+export PATH="$PATH:/Users/ryoh827/.local/bin"
