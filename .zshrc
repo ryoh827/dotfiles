@@ -103,9 +103,6 @@ alias mv='mv -i'
 alias mkdir='mkdir -p'
 
 alias diff='diff -u'
-if [[ -x `which delta` ]]; then
-  alias diff='delta'
-fi
 
 alias h='history'
 
@@ -201,12 +198,6 @@ if [[ -x `which eza` ]]; then
   alias ls='eza --smart-group -F'
 else
   alias ls='ls -G -F'
-fi
-if [[ -x `which bat` ]]; then
-  alias cat="bat"
-fi
-if [[ -x `which rg` ]]; then
-  alias grep='rg'
 fi
 
 function ghq-open() {
