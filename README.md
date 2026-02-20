@@ -43,6 +43,5 @@ Dynamic Profile で以下のフォントを前提にしています。未イン�
 インストール例（macOS / Homebrew）:
 
 ```sh
-brew tap homebrew/cask-fonts
 brew install --cask font-sauce-code-pro-nerd-font
 ```
