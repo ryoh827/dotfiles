@@ -237,7 +237,7 @@ zle -N fzf-select-history
 bindkey '^r' fzf-select-history
 
 # exports
-export PATH="$PATH:/Users/ryoh827/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 export SLACK_WEBHOOK_URL="{{ onepasswordRead "op://Private/liiilwdlwpn5bsanstmrarsozq/credential" }}"
 
 
@@ -245,10 +245,10 @@ export SLACK_WEBHOOK_URL="{{ onepasswordRead "op://Private/liiilwdlwpn5bsanstmra
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"# Created by `pipx` on 2025-06-21 14:21:17
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/ryoh827/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ryoh827/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/ryoh827/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ryoh827/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
 # Kiro CLI post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
