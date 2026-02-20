@@ -1,0 +1,59 @@
+[user]
+	email = {{ onepasswordRead "op://Private/gitconfig/email" }}
+	name  = {{ onepasswordRead "op://Private/gitconfig/name" }}
+	signingkey = {{ onepasswordRead "op://Private/gitconfig/signingkey" }}
+
+[push]
+	autoSetupRemote = true
+
+[core]
+	editor      = nvim
+  ignorecase  = false
+  pager       = delta
+
+[delta]
+  navigate     = true
+  dark         = true
+  algorithm    = histogram
+  submodule    = log
+  side-by-side = false
+  line-numbers = true
+
+[interactive]
+    diffFilter = delta --color-only
+
+[alias]
+  br  = branch
+  sh  = switch
+  c   = commit
+  co  = checkout
+  dc  = !git c -m $(date +%Y-%m-%d-%H:%M:%S)
+  a   = add
+  shm = !git sh $(git mb)
+  mb  = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+  rom = !git rebase $(git mb)
+  ram = !git rebase -i --autosquash $(git mb)
+  ra  = !git rebase -i --autosquash
+  f   = fetch
+  d   = diff
+  pl  = pull
+  p   = push
+  pr  = !git p && gh pr create -w
+  st  = stash
+  s   = status
+  nb  = !git sh -c "$(date +%Y%m%d_%H%M%S)"
+  bran= !git sh -c ryoh827-$(date +%Y%m%d)-$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c 6); }
+
+[ghq]
+	root = ~/go/src
+	root = ~/ghq
+
+[merge]
+  conflictstyle = zdiff3
+
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[commit]
+	gpgsign = true
