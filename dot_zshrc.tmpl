@@ -164,7 +164,7 @@ case ${OSTYPE} in
         export PATH="/opt/homebrew/bin:$PATH"
         export PATH="$(brew --prefix openssl)/bin:$PATH"
         export PATH="$(brew --prefix readline)/bin:$PATH"
-        export PATH="/Users/ryoh827/bin:$PATH"
+        export PATH="$HOME/bin:$PATH"
         export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl)"
 
         eval "$(starship init zsh)"
