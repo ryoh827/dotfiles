@@ -1,8 +1,8 @@
 # Global CLAUDE.md Instructions
 
 ## Project Organization
-- 実行内容のサマリなどは適宜プロジェクトディレクトリの `,` ディレクトリに残すようにする
-- Keep execution summaries and project-specific notes in the `,` directory within each project
+- 実行内容のサマリなどは適宜プロジェクトディレクトリの `.scratch` ディレクトリに残すようにする
+- Keep execution summaries and project-specific notes in the `.scratch` directory within each project
 
 ### 保存すべきもの (What to save):
 - 実行したコマンドとその結果 (Executed commands and their results)
@@ -25,7 +25,8 @@
 - Follow existing code conventions and patterns in each project
 - Use TodoWrite tool to track complex tasks and provide visibility into progress
 - テストを生成するときに可能な限り、Mockを使用しないでください
-  - 使って良いMockはWebMockのみです
+  - 言語別の指針: Ruby は WebMock のみ、JavaScript/TypeScript は jest.fn() や MSW は必要時のみ、Python は unittest.mock の必要最小限、Go は interface を使った最小限のモック
+  - モックは外部I/Oや不安定な依存の隔離が必要な場合に限定する
 
 ## Code Generation Rules
 - コード生成時はコメントを一切書かない (DO NOT write any comments when generating code)
