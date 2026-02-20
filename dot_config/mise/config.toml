@@ -1,0 +1,19 @@
+[tools]
+deno = "2.1.6"
+go = "1.23.4"
+uv = "latest"
+ruby = ["3.5-dev", "3.4.4"]
+rust = "stable"
+ghc = "9.12.2"
+"npm:@openai/codex" = "latest"
+node = "24.1.0"
+#"pipx:plamo-translate" = { version = "latest", uvx_args = "--with mlx_lm --with numba --with git+https://github.com/google/sentencepiece.git@2734490#subdirectory=python" }
+
+[settings]
+idiomatic_version_file_enable_tools = ["ruby"]
+
+[settings.pipx]
+uvx = true
+
+[settings.python]
+venv_stdlib = true
