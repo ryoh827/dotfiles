@@ -1,0 +1,37 @@
+" Plugins
+set surround
+set easymotion
+set highlightedyank
+set textobj-entire
+
+" set <leader> to <space>
+let mapleader = " "
+
+" 現在のモードをステータスバーに表示
+set showmode
+
+" 検索で大文字小文字を区別しない
+set ignorecase
+set smartcase
+
+" インクリメンタル検索
+set incsearch
+
+" 最後まで検索したら最初に戻る
+set wrapscan
+
+" 検索結果をハイライト
+set hlsearch
+
+" yankをクリップボードにコピーする
+set clipboard+=unnamedplus
+
+" mappings
+nmap [c <Action>(VcsShowPrevChangeMarker)
+nmap ]c <Action>(VcsShowNextChangeMarker)
+
+nmap [q <Action>(GotoPreviousError)
+nmap ]q <Action>(GotoNextError)
+
+nmap gh <Action>(ShowHoverInfo)
+
