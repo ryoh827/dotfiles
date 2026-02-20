@@ -1,0 +1,26 @@
+.DS_STORE
+
+# for vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# .idea
+.idea/*
+
+# mise
+.mise.local.toml
+mise.local.toml
+
+,/**
+
+**/.claude/settings.local.json
