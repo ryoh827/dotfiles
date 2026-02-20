@@ -1,4 +1,4 @@
-# Global CLAUDE.md Instructions
+# Global AGENTS.md Instructions
 
 ## Project Organization
 - 実行内容のサマリなどは適宜プロジェクトディレクトリの `.scratch` ディレクトリに残すようにする
