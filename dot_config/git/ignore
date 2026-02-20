@@ -21,6 +21,6 @@
 .mise.local.toml
 mise.local.toml
 
-,/**
+.scratch/**
 
 **/.claude/settings.local.json
