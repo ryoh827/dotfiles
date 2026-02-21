@@ -1,0 +1,4 @@
+version: 1
+display_name: PR Review Fix
+short_description: PRレビューコメントを取得して単発で修正しcommit/pushする
+default_prompt: 現在のPRレビューコメントを確認して必要な修正を実施し、コミットとpushまで行ってください
