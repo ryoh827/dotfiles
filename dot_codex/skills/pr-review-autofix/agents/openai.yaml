@@ -1,0 +1,4 @@
+version: 1
+display_name: PR Review Autofix
+short_description: PR作成後に同一Codexセッション限定で自動レビュー修正を開始する
+default_prompt: PRを作成して、同一Codexセッション内だけ有効なreview autofixを開始してください
