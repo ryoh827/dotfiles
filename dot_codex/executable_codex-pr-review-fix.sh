@@ -16,7 +16,11 @@ parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --pr)
-        PR_NUMBER="${2:-}"
+        if [[ $# -lt 2 || -z "${2:-}" || "${2:-}" == --* ]]; then
+          echo "--pr requires a pull request number" >&2
+          exit 1
+        fi
+        PR_NUMBER="$2"
         shift 2
         ;;
       *)
@@ -47,11 +51,10 @@ resolve_pr_number() {
 
 load_pr_meta() {
   local pr_json
-  pr_json="$(gh pr view "$PR_NUMBER" --json number,title,url,headRefName,reviewDecision)"
+  pr_json="$(gh pr view "$PR_NUMBER" --json number,title,url,headRefName)"
   PR_URL="$(jq -r '.url' <<<"$pr_json")"
   PR_TITLE="$(jq -r '.title // ""' <<<"$pr_json")"
   HEAD_REF_NAME="$(jq -r '.headRefName // ""' <<<"$pr_json")"
-  REVIEW_DECISION="$(jq -r '.reviewDecision // ""' <<<"$pr_json")"
   REPO_PATH="$(sed -E 's#https://github.com/([^/]+/[^/]+)/pull/[0-9]+#\1#' <<<"$PR_URL")"
   OWNER="${REPO_PATH%%/*}"
   REPO="${REPO_PATH##*/}"
