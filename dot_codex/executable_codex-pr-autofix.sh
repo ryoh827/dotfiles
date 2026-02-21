@@ -236,6 +236,8 @@ fetch_review_snapshot() {
       query($owner: String!, $name: String!, $number: Int!) {
         repository(owner: $owner, name: $name) {
           pullRequest(number: $number) {
+            state
+            merged
             reviewDecision
             reviews(last: 30) {
               nodes {
@@ -498,17 +500,46 @@ run_loop_command() {
     fi
     local review_decision
     review_decision="$(jq -r '.data.repository.pullRequest.reviewDecision // ""' <<<"$snapshot")"
+    local pr_state
+    pr_state="$(jq -r '.data.repository.pullRequest.state // ""' <<<"$snapshot")"
+    local pr_merged
+    pr_merged="$(jq -r '.data.repository.pullRequest.merged // false' <<<"$snapshot")"
     update_state "$state_file" --arg ts "$ts" --arg rd "$review_decision" '
       .status = "running" |
       .updated_at = $ts |
       .review_decision = $rd
     '
+    if [[ "$pr_state" == "CLOSED" || "$pr_merged" == "true" ]]; then
+      update_state "$state_file" --arg ts "$ts" --arg st "$pr_state" --arg mg "$pr_merged" '
+        .status = "stopped" |
+        .updated_at = $ts |
+        .last_action = "pr_closed_or_merged" |
+        .last_error = "" |
+        .pr_state = $st |
+        .pr_merged = ($mg == "true")
+      '
+      rm -f "$pid_file"
+      exit 0
+    fi
     if [[ "$review_decision" == "APPROVED" ]]; then
       update_state "$state_file" --arg ts "$ts" '
         .status = "stopped" |
         .updated_at = $ts |
         .last_action = "approved_detected" |
         .last_error = ""
+      '
+      rm -f "$pid_file"
+      exit 0
+    fi
+    local processed_count
+    processed_count="$(jq -r '.processed_review_ids | length' "$state_file")"
+    if (( processed_count > 0 )) && [[ "$review_decision" != "CHANGES_REQUESTED" ]]; then
+      update_state "$state_file" --arg ts "$ts" --arg rd "$review_decision" '
+        .status = "stopped" |
+        .updated_at = $ts |
+        .last_action = "changes_request_cleared" |
+        .last_error = "" |
+        .review_decision = $rd
       '
       rm -f "$pid_file"
       exit 0

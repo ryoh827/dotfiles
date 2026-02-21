@@ -30,4 +30,7 @@ Stop watcher manually when requested:
 1. This skill never creates a global daemon.
 2. This skill targets only one PR at start time.
 3. Trigger handling is for `CHANGES_REQUESTED`.
-4. If `APPROVED` is detected, watcher exits.
+4. Watcher exits automatically when one of the following is detected:
+   - `APPROVED`
+   - PR is closed or merged
+   - At least one `CHANGES_REQUESTED` was processed and review decision is no longer `CHANGES_REQUESTED`
