@@ -11,14 +11,14 @@ if [ -z "$payload" ]; then
 fi
 
 event_type="$(printf '%s' "$payload" | jq -r '.type // ""' 2>/dev/null || true)"
-if [ "$event_type" != "approval-requested" ]; then
+if [ "$event_type" != "approval-requested" ] && [ "$event_type" != "agent-turn-complete" ]; then
   exit 0
 fi
 
 message_json="$(printf '%s' "$payload" | jq -c '
   . as $e
   | [
-      "Codex approval requested",
+      (if ($e.type // "") == "approval-requested" then "Codex approval requested" else "Codex turn completed" end),
       ($e.title // empty),
       ($e.message // empty),
       (if ($e.cwd // "") != "" then "wd: \($e.cwd)" else empty end),
