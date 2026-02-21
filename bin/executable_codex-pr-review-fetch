@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec "${HOME}/.codex/codex-pr-review-fetch.sh" "$@"
