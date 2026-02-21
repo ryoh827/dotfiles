@@ -40,10 +40,14 @@ ensure_clean_worktree() {
 
 resolve_pr_number() {
   if [[ -n "$PR_NUMBER" ]]; then
+    if [[ ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+      echo "--pr must be a numeric pull request number" >&2
+      exit 1
+    fi
     return
   fi
   PR_NUMBER="$(gh pr view --json number -q '.number' 2>/dev/null || true)"
-  if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+  if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" || ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
     echo "failed to resolve PR number from current branch; pass --pr <number>" >&2
     exit 1
   fi
