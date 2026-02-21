@@ -20,6 +20,7 @@ Use this skill for manual, one-shot review handling.
 ## Behavior
 
 1. Fetches review comments from the target PR.
-2. Calls `codex exec` with consolidated review context.
-3. Commits and pushes only if code changes are produced.
-4. Exits with an error when the working tree is dirty.
+2. Uses `codex-pr-review-fetch` as the fixed review-fetch entrypoint.
+3. Calls `codex exec` with consolidated review context.
+4. Commits and pushes only if code changes are produced.
+5. Exits with an error when the working tree is dirty.

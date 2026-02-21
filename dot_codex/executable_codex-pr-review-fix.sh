@@ -74,54 +74,7 @@ ensure_branch_matches_pr() {
 }
 
 fetch_review_snapshot() {
-  gh api graphql \
-    -f query='
-      query($owner: String!, $name: String!, $number: Int!) {
-        repository(owner: $owner, name: $name) {
-          pullRequest(number: $number) {
-            reviewDecision
-            comments(last: 30) {
-              nodes {
-                body
-                createdAt
-                author {
-                  login
-                }
-              }
-            }
-            reviews(last: 40) {
-              nodes {
-                id
-                state
-                body
-                submittedAt
-                author {
-                  login
-                }
-              }
-            }
-            reviewThreads(last: 80) {
-              nodes {
-                isResolved
-                comments(last: 20) {
-                  nodes {
-                    body
-                    createdAt
-                    path
-                    author {
-                      login
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    ' \
-    -F owner="$OWNER" \
-    -F name="$REPO" \
-    -F number="$PR_NUMBER"
+  codex-pr-review-fetch --owner "$OWNER" --repo "$REPO" --pr "$PR_NUMBER"
 }
 
 build_review_text() {
@@ -206,6 +159,7 @@ main() {
   ensure_tool jq
   ensure_tool codex
   ensure_tool git
+  ensure_tool codex-pr-review-fetch
   parse_args "$@"
   ensure_clean_worktree
   resolve_pr_number
