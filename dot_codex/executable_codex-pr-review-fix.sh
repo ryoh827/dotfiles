@@ -55,7 +55,10 @@ resolve_pr_number() {
 
 load_pr_meta() {
   local pr_json
-  pr_json="$(gh pr view "$PR_NUMBER" --json number,title,url,headRefName)"
+  if ! pr_json="$(gh pr view "$PR_NUMBER" --json number,title,url,headRefName 2>&1)"; then
+    echo "failed to load PR metadata for #$PR_NUMBER: $pr_json" >&2
+    exit 1
+  fi
   PR_URL="$(jq -r '.url' <<<"$pr_json")"
   PR_TITLE="$(jq -r '.title // ""' <<<"$pr_json")"
   HEAD_REF_NAME="$(jq -r '.headRefName // ""' <<<"$pr_json")"

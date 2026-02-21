@@ -4,6 +4,9 @@ set -euo pipefail
 OWNER=""
 REPO=""
 PR_NUMBER=""
+COMMENTS_LIMIT="${CODEX_PR_REVIEW_FETCH_COMMENTS_LIMIT:-30}"
+REVIEWS_LIMIT="${CODEX_PR_REVIEW_FETCH_REVIEWS_LIMIT:-40}"
+THREADS_LIMIT="${CODEX_PR_REVIEW_FETCH_THREADS_LIMIT:-80}"
 
 parse_args() {
   while [[ $# -gt 0 ]]; do
@@ -49,6 +52,18 @@ validate_inputs() {
     echo "--pr must be a numeric pull request number" >&2
     exit 1
   fi
+  if [[ ! "$COMMENTS_LIMIT" =~ ^[0-9]+$ ]] || (( COMMENTS_LIMIT < 1 )); then
+    echo "CODEX_PR_REVIEW_FETCH_COMMENTS_LIMIT must be a positive integer" >&2
+    exit 1
+  fi
+  if [[ ! "$REVIEWS_LIMIT" =~ ^[0-9]+$ ]] || (( REVIEWS_LIMIT < 1 )); then
+    echo "CODEX_PR_REVIEW_FETCH_REVIEWS_LIMIT must be a positive integer" >&2
+    exit 1
+  fi
+  if [[ ! "$THREADS_LIMIT" =~ ^[0-9]+$ ]] || (( THREADS_LIMIT < 1 )); then
+    echo "CODEX_PR_REVIEW_FETCH_THREADS_LIMIT must be a positive integer" >&2
+    exit 1
+  fi
 }
 
 main() {
@@ -56,11 +71,11 @@ main() {
   validate_inputs
   gh api graphql \
     -f query='
-      query($owner: String!, $name: String!, $number: Int!) {
+      query($owner: String!, $name: String!, $number: Int!, $commentsLimit: Int!, $reviewsLimit: Int!, $threadsLimit: Int!) {
         repository(owner: $owner, name: $name) {
           pullRequest(number: $number) {
             reviewDecision
-            comments(last: 30) {
+            comments(last: $commentsLimit) {
               nodes {
                 body
                 createdAt
@@ -69,7 +84,7 @@ main() {
                 }
               }
             }
-            reviews(last: 40) {
+            reviews(last: $reviewsLimit) {
               nodes {
                 id
                 state
@@ -80,7 +95,7 @@ main() {
                 }
               }
             }
-            reviewThreads(last: 80) {
+            reviewThreads(last: $threadsLimit) {
               nodes {
                 isResolved
                 comments(last: 20) {
@@ -101,7 +116,10 @@ main() {
     ' \
     -F owner="$OWNER" \
     -F name="$REPO" \
-    -F number="$PR_NUMBER"
+    -F number="$PR_NUMBER" \
+    -F commentsLimit="$COMMENTS_LIMIT" \
+    -F reviewsLimit="$REVIEWS_LIMIT" \
+    -F threadsLimit="$THREADS_LIMIT"
 }
 
 main "$@"

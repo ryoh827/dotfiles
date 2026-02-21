@@ -24,3 +24,9 @@ Use this skill for manual, one-shot review handling.
 3. Calls `codex exec` with consolidated review context.
 4. Commits and pushes only if code changes are produced.
 5. Exits with an error when the working tree is dirty.
+
+## Optional Env Vars
+
+- `CODEX_PR_REVIEW_FETCH_COMMENTS_LIMIT`
+- `CODEX_PR_REVIEW_FETCH_REVIEWS_LIMIT`
+- `CODEX_PR_REVIEW_FETCH_THREADS_LIMIT`
