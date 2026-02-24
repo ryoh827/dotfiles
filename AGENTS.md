@@ -1,27 +1,25 @@
 # Global AGENTS.md Instructions
 
 ## Project Organization
-- 実行内容のサマリなどは適宜プロジェクトディレクトリの `.scratch` ディレクトリに残すようにする
-- Keep execution summaries and project-specific notes in the `.scratch` directory within each project
+- 永続的に必要な情報のみ、`docs/` など既存の適切な場所に残す
+- Keep only permanently useful information in `docs/` or another appropriate long-lived location
 
 ### 保存すべきもの (What to save):
-- 実行したコマンドとその結果 (Executed commands and their results)
-- ファイルの作成・編集・削除の履歴 (File creation, modification, and deletion history)
-- 調査や検索の過程と結果 (Investigation and search processes and results)
-- 設定変更やインストール作業 (Configuration changes and installation tasks)
-- エラー対応やトラブルシューティング履歴 (Error handling and troubleshooting history)
+- 長期的に参照する運用ルールや合意済みプラン (Long-lived operational rules and agreed plans)
 - 今後の参考になる解決策 (Solutions that may be useful for future reference)
 - プロジェクト固有の設定やワークフロー (Project-specific configurations and workflows)
 - APIやライブラリの使用例 (API and library usage examples)
-- デバッグプロセスと解決方法 (Debugging processes and solutions)
+- 再発しうる問題の対処方法 (Fixes for issues likely to recur)
 
 ### 保存不要なもの (What not to save):
 - パスワードや秘密鍵などの機密情報 (Passwords, secret keys, and sensitive information)
 - 完全に自明な操作（例：単純なcdコマンドのみ）(Completely trivial operations like simple cd commands)
+- 一時的な実行ログ、途中経過の調査メモ、使い捨てのプラン (Temporary execution logs, interim investigation notes, disposable plans)
 
 ## General Guidelines
 - Always prefer editing existing files over creating new ones
-- Never create documentation files unless explicitly requested
+- Never create temporary documentation files unless explicitly requested
+- Persistent documentation in `docs/` (or an existing long-lived location) is allowed when it provides ongoing value
 - Follow existing code conventions and patterns in each project
 - Use TodoWrite tool to track complex tasks and provide visibility into progress
 - テストを生成するときに可能な限り、Mockを使用しないでください
