@@ -1,0 +1,4 @@
+version: 1
+display_name: Chezmoi Conventions (ryoh827)
+short_description: ryoh827のchezmoiリポジトリ固有の配置ルールを守る
+default_prompt: ryoh827のchezmoi/dotfilesリポジトリの規約に従って変更してください。特に ~/bin 配下のコマンド配置は bin/executable_<name> を使ってください
