@@ -1,0 +1,4 @@
+version: 1
+display_name: Chezmoi Shared Skill Fanout
+short_description: 1つのskill sourceをCodex/Claudeへchezmoi includeで展開する
+default_prompt: ryoh827のdotfilesで新しいskillを追加します。skills配下をsource of truthにして、dot_codexとdot_claudeへincludeで展開する構成で作成してください
