@@ -1,0 +1,4 @@
+version: 1
+display_name: Plan Go
+short_description: 承認済みプランを順番に実装して検証まで実行する
+default_prompt: 指定したplanファイルを読み、未解決マーカー（XXX:/TODO:/AI-ASK:）が残っていれば実装前に停止して確認を取り、問題なければSKILL.mdの安全条件と検証条件に従って順番に実装し、成功時のみplanファイルを削除してください

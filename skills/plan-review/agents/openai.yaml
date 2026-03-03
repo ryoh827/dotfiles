@@ -1,0 +1,4 @@
+version: 1
+display_name: Plan Review
+short_description: プラン内のXXX反映とAI-ASK追記で実装前の品質を高める
+default_prompt: planファイルをレビューし、XXXコメントを反映してAI-ASKを追記したうえで変更点を要約してください
