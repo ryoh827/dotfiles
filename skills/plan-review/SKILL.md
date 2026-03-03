@@ -26,7 +26,7 @@ Use this skill when the user wants plan-only refinement.
 4. Insert each issue immediately after the relevant section as:
    - `AI-ASK: {question}`
 5. Provide a summary of edits and added questions.
-6. If there are no `XXX:` comments and no added questions, respond exactly:
+6. If there are no unresolved markers (`XXX:`, `TODO:`, `AI-ASK:`), respond exactly:
    - `No unclear points in the plan. Ready for implementation.`
 
 ## Constraints
