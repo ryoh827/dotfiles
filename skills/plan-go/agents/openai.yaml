@@ -1,0 +1,4 @@
+version: 1
+display_name: Plan Go
+short_description: 承認済みプランを順番に実装して検証まで実行する
+default_prompt: 指定したplanファイルに従って順番に実装し、各ステップで検証して最後にplanファイルを削除してください

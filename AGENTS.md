@@ -46,3 +46,11 @@
 - コミットメッセージは日本語で記述する (Write commit messages in Japanese)
 - feat:, fix:, docs:, refactor: などのプレフィックスを付ける (Use prefixes like feat:, fix:, docs:, refactor:)
 - Example: "feat: ユーザー認証機能を追加"
+
+## Plan Workflow Defaults
+- プランモードで `<proposed_plan>` を提示した直後に通常モードへ移った場合、ユーザーが拒否しない限り次を既定で実行する
+- Save the proposed plan to a file by default after leaving Plan mode unless the user opts out
+- 保存先はユーザー指定があれば最優先、指定がなければ `docs/plans/<YYYY-MM-DD>_<slug>.md` を使う
+- `docs/plans/` は合意済みプランの保存先として扱う
+- 保存後は `plan-review` ワークフローをそのファイルに対して実行する
+- `plan-go` は明示依頼があるときだけ実行する
