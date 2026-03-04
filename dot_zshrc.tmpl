@@ -167,7 +167,12 @@ case ${OSTYPE} in
         export PATH="$HOME/bin:$PATH"
         export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl)"
 
-        eval "$(starship init zsh)"
+        if [[ -r "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+          source "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme"
+        fi
+        if [[ -r "$HOME/.p10k.zsh" ]]; then
+          source "$HOME/.p10k.zsh"
+        fi
 
         # plugins config
         source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -181,8 +186,12 @@ case ${OSTYPE} in
         # brew
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-        # starship
-        eval "$(starship init zsh)"
+        if [[ -r "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+          source "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme"
+        fi
+        if [[ -r "$HOME/.p10k.zsh" ]]; then
+          source "$HOME/.p10k.zsh"
+        fi
 
         # alias
         ;;

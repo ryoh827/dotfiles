@@ -38,7 +38,7 @@ brew "peco"
 brew "pkgconf"
 brew "postgresql@14"
 brew "ripgrep"
-brew "starship"
+brew "powerlevel10k"
 brew "tig"
 brew "tmux"
 brew "trash", link: true
