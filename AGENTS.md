@@ -45,6 +45,7 @@
 ## Git Commit Rules
 - コミットメッセージは日本語で記述する (Write commit messages in Japanese)
 - feat:, fix:, docs:, refactor: などのプレフィックスを付ける (Use prefixes like feat:, fix:, docs:, refactor:)
+- コミット時は署名を必須にする (Require signed commits)
 - Example: "feat: ユーザー認証機能を追加"
 
 ## Plan Workflow Defaults
