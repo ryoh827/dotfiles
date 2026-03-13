@@ -1,6 +1,7 @@
 ---
 name: plan-go
 description: Execute an approved implementation plan file step by step, enforce unresolved-marker gate checks (XXX:/TODO:/AI-ASK:), run verification commands in defined priority, and remove the plan file after successful completion.
+TRIGGER when: plan-review completes with no unresolved markers, or the user explicitly requests plan execution.
 ---
 
 # Plan Go

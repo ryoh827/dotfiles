@@ -1,6 +1,7 @@
 ---
 name: plan-review
 description: Review and improve a plan document by applying inline feedback markers (XXX:), adding targeted clarification questions as AI-ASK:, and producing a concise change summary. Use when a user asks to refine planning docs before implementation without writing code.
+TRIGGER when: a plan file is saved to docs/plans/, or the user asks to review/refine a plan.
 ---
 
 # Plan Review

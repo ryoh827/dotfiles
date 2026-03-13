@@ -53,5 +53,6 @@
 - Save the proposed plan to a file by default after leaving Plan mode unless the user opts out
 - 保存先はユーザー指定があれば最優先、指定がなければ `docs/plans/<YYYY-MM-DD>_<slug>.md` を使う
 - `docs/plans/` は合意済みプランの保存先として扱う
-- 保存後は `plan-review` ワークフローをそのファイルに対して実行する
-- `plan-go` は明示依頼があるときだけ実行する
+- 保存後は Skill ツールで `/plan-review` を実行する（引数にファイルパスを渡す）
+- `/plan-review` 完了後は結果を共有し、`/plan-go` はユーザーが明示的に要求した場合のみ Skill ツールで実行する（引数にファイルパスを渡す）
+- ユーザーが明示的にスキップを指示した場合のみ `/plan-review` を省略する
