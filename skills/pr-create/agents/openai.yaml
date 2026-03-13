@@ -1,0 +1,4 @@
+version: 1
+display_name: PR Create
+short_description: 現在のブランチをpushしてGitHub PRを作成する
+default_prompt: 現在のブランチをリモートにpushし、全コミットを分析してPRを作成してください
