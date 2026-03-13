@@ -19,7 +19,7 @@ description: Use this skill when you want to push the current branch and create 
 
 ### 1. ベースブランチの特定
 
-```
+```bash
 git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
 ```
 
@@ -29,14 +29,14 @@ git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
 
 以下を実行して全コミットの内容を把握する:
 
-```
+```bash
 git log <base>..HEAD --oneline
 git diff <base>...HEAD --stat
 ```
 
 ### 3. Push
 
-```
+```bash
 git push -u origin HEAD
 ```
 
@@ -57,8 +57,8 @@ git push -u origin HEAD
 
 PRを作成する:
 
-```
-gh pr create --title "<title>" --body "<body>"
+```bash
+gh pr create --base "<base>" --title "<title>" --body "<body>"
 ```
 
 ### 5. 結果
