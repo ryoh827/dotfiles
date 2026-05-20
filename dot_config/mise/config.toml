@@ -5,6 +5,7 @@ ruby = ["3.5-dev", "3.4.4"]
 rust = "stable"
 ghc = "9.12.2"
 node = "24.1.0"
+terraform = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["ruby", "node", "pnpm", "terraform"]
