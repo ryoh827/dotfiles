@@ -83,6 +83,10 @@ return {
         'ruby',
       })
 
+      vim.treesitter.language.register('vimdoc', 'help')
+      vim.treesitter.language.register('bash', { 'sh', 'zsh' })
+      vim.treesitter.language.register('tsx', 'typescriptreact')
+
       vim.api.nvim_create_autocmd('FileType', {
         pattern = {
           'lua',
