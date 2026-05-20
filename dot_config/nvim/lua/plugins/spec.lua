@@ -58,6 +58,64 @@ return {
   {'github/copilot.vim'},
   {'tpope/vim-endwise'},
   {
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false,
+    build = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter').install({
+        'lua',
+        'vim',
+        'vimdoc',
+        'bash',
+        'json',
+        'yaml',
+        'toml',
+        'markdown',
+        'markdown_inline',
+        'html',
+        'css',
+        'javascript',
+        'typescript',
+        'tsx',
+        'go',
+        'python',
+        'ruby',
+      })
+
+      vim.treesitter.language.register('vimdoc', 'help')
+      vim.treesitter.language.register('bash', { 'sh', 'zsh' })
+      vim.treesitter.language.register('tsx', 'typescriptreact')
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = {
+          'lua',
+          'vim',
+          'help',
+          'sh',
+          'bash',
+          'zsh',
+          'json',
+          'yaml',
+          'toml',
+          'markdown',
+          'html',
+          'css',
+          'javascript',
+          'typescript',
+          'typescriptreact',
+          'go',
+          'python',
+          'ruby',
+        },
+        callback = function()
+          pcall(vim.treesitter.start)
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
+      })
+    end,
+  },
+  {
     'Wansmer/treesj',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
