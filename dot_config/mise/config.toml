@@ -7,7 +7,7 @@ ghc = "9.12.2"
 node = "24.1.0"
 
 [settings]
-idiomatic_version_file_enable_tools = ["ruby", "node", "pnpm"]
+idiomatic_version_file_enable_tools = ["ruby", "node", "pnpm", "terraform"]
 
 [settings.python]
 venv_stdlib = true
