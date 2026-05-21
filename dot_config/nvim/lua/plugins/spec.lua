@@ -12,6 +12,13 @@ return {
     end
   },
   {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      require("nvim-autopairs").setup({})
+    end,
+  },
+  {
     "glidenote/memolist.vim",
     config = function()
       vim.g.memolist_path = home_dir .. "/memo"
