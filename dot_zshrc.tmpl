@@ -252,7 +252,7 @@ export SLACK_WEBHOOK_URL="{{ onepasswordRead "op://Private/liiilwdlwpn5bsanstmra
 
 
 # machine-local overrides (not managed by chezmoi)
-[[ -f "$HOME/.zshrc.local" ]] && builtin source "$HOME/.zshrc.local"
+[[ -r "$HOME/.zshrc.local" ]] && builtin source "$HOME/.zshrc.local"
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"# Created by `pipx` on 2025-06-21 14:21:17
