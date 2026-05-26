@@ -133,6 +133,11 @@ return {
   },
   {'monaqa/dial.nvim'},
   {
+    "linrongbin16/gitlinker.nvim",
+    cmd = "GitLink",
+    opts = {},
+  },
+  {
     'lewis6991/gitsigns.nvim',
     config = function()
       require('gitsigns').setup()

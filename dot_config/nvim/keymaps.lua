@@ -53,6 +53,27 @@ vim.diagnostic.config({
   },
 })
 
+vim.keymap.set('n', '<leader>yp', function()
+  local abs = vim.fn.expand('%:p')
+  if abs == '' then
+    vim.notify('No file in buffer', vim.log.levels.WARN)
+    return
+  end
+  local root = vim.fn.systemlist({ 'git', '-C', vim.fn.expand('%:p:h'), 'rev-parse', '--show-toplevel' })[1]
+  local path
+  if vim.v.shell_error == 0 and root and root ~= '' then
+    path = abs:sub(#root + 2)
+  else
+    path = vim.fn.fnamemodify(abs, ':.')
+  end
+  vim.fn.setreg('+', path)
+  vim.notify('Yanked: ' .. path)
+end, { desc = 'Yank relative path (repo root)' })
+
+vim.keymap.set({ 'n', 'x' }, '<leader>yg', '<cmd>GitLink<cr>', { desc = 'Yank GitHub link (HEAD commit)' })
+vim.keymap.set({ 'n', 'x' }, '<leader>yG', '<cmd>GitLink default_branch<cr>', { desc = 'Yank GitHub link (default branch)' })
+vim.keymap.set({ 'n', 'x' }, '<leader>yo', '<cmd>GitLink!<cr>', { desc = 'Open GitHub link in browser' })
+
 vim.keymap.set('n', 'gl', function() vim.diagnostic.open_float(nil, { focus = false }) end, { noremap = true, silent = true, desc = "Show line diagnostics" })
 vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { noremap = true, silent = true, desc = "Previous diagnostic" })
 vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { noremap = true, silent = true, desc = "Next diagnostic" })
