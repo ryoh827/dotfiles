@@ -120,6 +120,8 @@ alias b="brew"
 alias d="docker"
 alias c="claude"
 alias cds='cd $(chezmoi source-path)'
+alias dc='docker compose'
+alias be='bundle exec'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -248,6 +250,9 @@ bindkey '^r' fzf-select-history
 export PATH="$PATH:$HOME/.local/bin"
 export SLACK_WEBHOOK_URL="{{ onepasswordRead "op://Private/liiilwdlwpn5bsanstmrarsozq/credential" }}"
 
+
+# machine-local overrides (not managed by chezmoi)
+[[ -r "$HOME/.zshrc.local" ]] && builtin source "$HOME/.zshrc.local"
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"# Created by `pipx` on 2025-06-21 14:21:17
