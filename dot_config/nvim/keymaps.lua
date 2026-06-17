@@ -13,6 +13,9 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live gr
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fr', [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], {noremap = true, silent = true, desc = 'Telescope Recent Files'})
+vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = 'Telescope diagnostics' })
+vim.keymap.set('n', '<leader>fs', builtin.lsp_document_symbols, { desc = 'Telescope document symbols' })
+vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = 'Telescope LSP references' })
 
 -- memolist
 vim.keymap.set('n', '<leader>mn', ":MemoNew<CR>", { desc = 'Memo new' })
@@ -34,9 +37,20 @@ vim.api.nvim_set_keymap('n', '<leader>bc', ':bnext<CR>:bd#<CR>', { noremap = tru
 vim.api.nvim_set_keymap('n', '<S-l>', ':bnext<CR>', { noremap = true, silent = true, desc='Next buffer' })
 vim.api.nvim_set_keymap('n', '<S-h>', ':bprevious<CR>', { noremap = true, silent = true, desc='Previous buffer' })
 
+-- dial.nvim (increment / decrement)
+local dial = require("dial.map")
+vim.keymap.set("n", "<C-a>", dial.inc_normal(), { noremap = true, desc = "Increment" })
+vim.keymap.set("n", "<C-x>", dial.dec_normal(), { noremap = true, desc = "Decrement" })
+vim.keymap.set("v", "<C-a>", dial.inc_visual(), { noremap = true, desc = "Increment" })
+vim.keymap.set("v", "<C-x>", dial.dec_visual(), { noremap = true, desc = "Decrement" })
+vim.keymap.set("v", "g<C-a>", dial.inc_gvisual(), { noremap = true, desc = "Increment (gradual)" })
+vim.keymap.set("v", "g<C-x>", dial.dec_gvisual(), { noremap = true, desc = "Decrement (gradual)" })
+
 vim.keymap.set('i', '<S-Tab>', '<C-d>', { noremap = true, silent = true })
 
-vim.api.nvim_set_keymap("n", "<leader>gf", ":lua vim.lsp.buf.format()<CR>", { noremap = true, silent = true, desc = "Format" })
+vim.keymap.set('n', '<leader>gf', function()
+  require('conform').format({ async = true, lsp_format = 'fallback' })
+end, { noremap = true, silent = true, desc = "Format (conform/LSP)" })
 vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true, desc = "Definition" })
 vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', { noremap = true, silent = true, desc = "Hover" })
 vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', { noremap = true, silent = true, desc = "Implementation" })
@@ -78,4 +92,3 @@ vim.keymap.set('n', 'gl', function() vim.diagnostic.open_float(nil, { focus = fa
 vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { noremap = true, silent = true, desc = "Previous diagnostic" })
 vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { noremap = true, silent = true, desc = "Next diagnostic" })
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { noremap = true, silent = true, desc = "Diagnostics to loclist" })
-
