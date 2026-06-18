@@ -18,6 +18,13 @@ local options = {
   hlsearch = true,
   foldmethod = "indent",
   foldlevel = 10,
+  termguicolors = true,
+  undofile = true,
+  signcolumn = "yes",
+  scrolloff = 8,
+  updatetime = 250,
+  splitright = true,
+  splitbelow = true,
 }
 
 for k, v in pairs(options) do
@@ -32,7 +39,6 @@ vim.g.markdown_recommended_style = 0
 require("config.autocmds")
 
 require("config.lazy")
--- vim.opt.termguicolors = true
 vim.cmd[[colorscheme dracula]]
 
 
@@ -41,4 +47,3 @@ package.path = home_dir .. '/.config/nvim/' .. package.path
 
 require("keymaps")
 require("lsps")
-
