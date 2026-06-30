@@ -25,11 +25,29 @@ return {
       vim.g.memolist_memo_suffix = "md"
     end
   },
-  { "vim-airline/vim-airline" },
-  { "vim-airline/vim-airline-themes" },
-  { 'preservim/nerdtree' },
-  { 'easymotion/vim-easymotion' },
-  { "Mofiqul/dracula.nvim" },
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("lualine").setup({
+        options = {
+          theme = "catppuccin",
+        },
+      })
+    end,
+  },
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
+  },
   {
     'stevearc/oil.nvim',
     opts = {},
@@ -206,15 +224,4 @@ return {
   {
     "williamboman/mason-lspconfig.nvim",
   },
-  {
-    "navarasu/onedark.nvim",
-    priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      require('onedark').setup {
-        style = 'darker'
-      }
-      -- Enable theme
-      require('onedark').load()
-    end
-  }
 }

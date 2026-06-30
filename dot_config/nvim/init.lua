@@ -36,10 +36,8 @@ vim.g.copilot_filetypes = {
 }
 vim.g.markdown_recommended_style = 0
 
-require("config.autocmds")
-
 require("config.lazy")
-vim.cmd[[colorscheme dracula]]
+vim.cmd[[colorscheme catppuccin]]
 
 
 local home_dir = os.getenv("HOME")
