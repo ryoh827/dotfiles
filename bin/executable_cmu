@@ -1,3 +1,3 @@
 #!/bin/sh
 cd "$(chezmoi source-path)" || exit 1
-git pull && chezmoi apply
+git checkout main && git pull && chezmoi apply
