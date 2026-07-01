@@ -16,6 +16,11 @@ vim.keymap.set('n', '<leader>fr', [[<cmd>lua require('telescope').extensions.rec
 vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = 'Telescope diagnostics' })
 vim.keymap.set('n', '<leader>fs', builtin.lsp_document_symbols, { desc = 'Telescope document symbols' })
 vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = 'Telescope LSP references' })
+vim.keymap.set('n', '<leader>ft', '<cmd>TodoTelescope<CR>', { desc = 'Telescope todo comments' })
+
+-- vim-illuminate
+vim.keymap.set('n', ']r', function() require('illuminate').goto_next_reference() end, { desc = 'Next reference' })
+vim.keymap.set('n', '[r', function() require('illuminate').goto_prev_reference() end, { desc = 'Previous reference' })
 
 -- memolist
 vim.keymap.set('n', '<leader>mn', ":MemoNew<CR>", { desc = 'Memo new' })
@@ -55,6 +60,8 @@ vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', { no
 vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', { noremap = true, silent = true, desc = "Hover" })
 vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', { noremap = true, silent = true, desc = "Implementation" })
 vim.api.nvim_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', { noremap = true, silent = true, desc = "Signature Help" })
+vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { noremap = true, silent = true, desc = "Rename symbol" })
+vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, { noremap = true, silent = true, desc = "Code action" })
 
 vim.diagnostic.config({
   virtual_text = true,
