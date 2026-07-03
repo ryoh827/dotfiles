@@ -6,37 +6,34 @@ function ghq-open() {
 }
 alias r='ghq-open'
 
-function git-branch-switch() {
-  # 現在のディレクトリが Git リポジトリか確認
-  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    # リモート/ローカル両方のブランチをリスト化
-    local branch=$(git branch -a --sort=-committerdate | sed 's/^[* ] //' | fzf --reverse)
-    if [[ -n $branch ]]; then
-      # リモートブランチの場合、refs/remotes/origin/ を削除
-      branch=$(echo $branch | sed 's#^remotes/origin/##')
-      git checkout "$branch" || echo "Failed to switch to branch $branch"
-    fi
-  else
+function _in_git_repo() {
+  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     echo "Not inside a Git repository."
+    return 1
+  fi
+}
+
+function git-branch-switch() {
+  _in_git_repo || return 1
+  # リモート/ローカル両方のブランチをリスト化
+  local branch=$(git branch -a --sort=-committerdate | sed 's/^[* ] //' | fzf --reverse)
+  if [[ -n $branch ]]; then
+    # リモートブランチの場合、refs/remotes/origin/ を削除
+    branch=$(echo $branch | sed 's#^remotes/origin/##')
+    git checkout "$branch" || echo "Failed to switch to branch $branch"
   fi
 }
 alias br='git-branch-switch'
 
 function git-worktree-switch() {
-  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    echo "Not inside a Git repository."
-    return 1
-  fi
+  _in_git_repo || return 1
   local wt=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10)}' | fzf --header 'switch worktree')
   [[ -n $wt ]] && cd "$wt"
 }
 alias gw='git-worktree-switch'
 
 function git-worktree-new() {
-  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    echo "Not inside a Git repository."
-    return 1
-  fi
+  _in_git_repo || return 1
   local branch=$(git branch -a --format='%(refname:short)' | grep -v '/HEAD$' | sed 's#^origin/##' | sort -u | fzf --header 'branch (未一致なら新規作成)' --print-query | tail -1)
   [[ -z $branch ]] && return
 
@@ -59,10 +56,7 @@ function git-worktree-new() {
 alias gwn='git-worktree-new'
 
 function git-worktree-remove() {
-  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    echo "Not inside a Git repository."
-    return 1
-  fi
+  _in_git_repo || return 1
   local main_dir=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10); exit}')
   local current_dir=$(pwd)
   local wts=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10)}' | tail -n +2 | fzf -m --header 'remove worktree(s)')

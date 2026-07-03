@@ -3,9 +3,11 @@ case ${OSTYPE} in
         export CLICOLOR=1
         export LSCOLORS=gxfxcxdxbxegedabagacfd
 
-        eval "$(/opt/homebrew/bin/brew shellenv)"
+        if [[ -x /opt/homebrew/bin/brew ]]; then
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
 
-        if [[ -x `which trash` ]]; then
+        if command -v trash >/dev/null 2>&1; then
           alias rm="trash"
         fi
 
@@ -25,13 +27,17 @@ case ${OSTYPE} in
         fi
 
         # plugins config
-        source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+        if [[ -r "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+          source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        fi
 
         # タブ名をカレントデュレクトリにする
         function chpwd() { echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print $1}'| rev)\007"}
         ;;
     linux*)
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        fi
 
         if [[ -r "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
           source "$(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme"
