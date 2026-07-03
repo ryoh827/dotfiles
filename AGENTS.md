@@ -46,4 +46,6 @@
 - コミットメッセージは日本語で記述する (Write commit messages in Japanese)
 - feat:, fix:, docs:, refactor: などのプレフィックスを付ける (Use prefixes like feat:, fix:, docs:, refactor:)
 - コミット時は署名を必須にする (Require signed commits)
+- 基本は要約1行のみにする。本文で変更点を逐一列挙しない (Default to a single summary line; do not itemize every change in the body)
+- 本文が必要なのは、要約だけでは伝わらない非自明な理由・背景がある場合のみ (Only add a body when there's a non-obvious reason/background the summary alone can't convey)
 - Example: "feat: ユーザー認証機能を追加"
