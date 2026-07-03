@@ -243,7 +243,7 @@ function git-worktree-switch() {
     echo "Not inside a Git repository."
     return 1
   fi
-  local wt=$(git worktree list | fzf --header 'switch worktree' | awk '{print $1}')
+  local wt=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10)}' | fzf --header 'switch worktree')
   [[ -n $wt ]] && cd "$wt"
 }
 alias gw='git-worktree-switch'
@@ -253,7 +253,7 @@ function git-worktree-new() {
     echo "Not inside a Git repository."
     return 1
   fi
-  local branch=$(git branch -a --format='%(refname:short)' | sed 's#^origin/##' | sort -u | fzf --header 'branch (未一致なら新規作成)' --print-query | tail -1)
+  local branch=$(git branch -a --format='%(refname:short)' | grep -v '/HEAD$' | sed 's#^origin/##' | sort -u | fzf --header 'branch (未一致なら新規作成)' --print-query | tail -1)
   [[ -z $branch ]] && return
 
   # git-common-dir はどの worktree から実行しても本体リポジトリを指すので、
@@ -264,9 +264,11 @@ function git-worktree-new() {
   local dir="${repo_root}-${branch//\//-}"
 
   if git show-ref --verify --quiet "refs/heads/${branch}"; then
-    git worktree add "$dir" "$branch"
+    git worktree add "$dir" "$branch" || return 1
+  elif git show-ref --verify --quiet "refs/remotes/origin/${branch}"; then
+    git worktree add --track -b "$branch" "$dir" "origin/${branch}" || return 1
   else
-    git worktree add -b "$branch" "$dir"
+    git worktree add -b "$branch" "$dir" || return 1
   fi
   cd "$dir"
 }
@@ -277,19 +279,23 @@ function git-worktree-remove() {
     echo "Not inside a Git repository."
     return 1
   fi
-  local main_dir=$(git worktree list | head -1 | awk '{print $1}')
+  local main_dir=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10); exit}')
   local current_dir=$(pwd)
-  local wts=$(git worktree list | tail -n +2 | grep -v '(bare)' | fzf -m --header 'remove worktree(s)' | awk '{print $1}')
+  local wts=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10)}' | tail -n +2 | fzf -m --header 'remove worktree(s)')
   [[ -z $wts ]] && return
 
   local removed_current=0
   local w
   for w in ${(f)wts}; do
-    [[ "$w" == "$current_dir" ]] && removed_current=1
-    git worktree remove "$w" && echo "removed: $w"
+    if git worktree remove "$w"; then
+      echo "removed: $w"
+      [[ "$current_dir" == "$w" || "$current_dir" == "$w"/* ]] && removed_current=1
+    else
+      echo "failed to remove: $w" >&2
+    fi
   done
 
-  # 今いた worktree を消した場合は本体リポジトリに戻る
+  # 今いた worktree を削除できた場合のみ本体リポジトリに戻る
   [[ $removed_current -eq 1 ]] && cd "$main_dir"
 }
 alias gwrm='git-worktree-remove'
