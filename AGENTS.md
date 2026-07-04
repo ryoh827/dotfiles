@@ -32,6 +32,11 @@
 - This applies to all programming languages and file types
 - ファイル末尾に改行をいれる
 
+## Language Selection
+- 明示的な指定や既存プロジェクトの言語がない限り、Python は使用しない (Do not use Python for ad-hoc scripts/tools unless explicitly requested or already the project's language)
+- 代わりに Ruby, Go, Rust, Bun (TypeScript/JavaScript) のいずれかを使う (Use Ruby, Go, Rust, or Bun instead)
+- 既存プロジェクトが Python の場合はそのまま Python で作業してよい (If an existing project is already written in Python, continue using Python for that project)
+
 ## File Management
 - Check existing project structure before making changes
 - Use appropriate search tools to understand codebase before implementing changes
