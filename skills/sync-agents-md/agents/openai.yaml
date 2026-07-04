@@ -1,0 +1,4 @@
+version: 1
+display_name: Sync AGENTS.md
+short_description: AGENTS.ja.mdの内容をAGENTS.mdに翻訳して同期する
+default_prompt: AGENTS.ja.mdの内容をAGENTS.mdに翻訳して反映してください
