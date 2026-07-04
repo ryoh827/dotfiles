@@ -34,13 +34,13 @@ vim.keymap.set('n', '<leader>mT', function()
     require('treesj').toggle({ split = { recursive = true } })
 end, { desc = 'Toggle tree (recursive)' })
 
--- buffer
+-- buffer (bufferline の表示順で移動する)
 vim.api.nvim_set_keymap('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc='Delete buffer' })
-vim.api.nvim_set_keymap('n', '<leader>bn', ':bnext<CR>', { noremap = true, silent = true, desc='Next buffer' })
-vim.api.nvim_set_keymap('n', '<leader>bp', ':bprevious<CR>', { noremap = true, silent = true, desc='Previous buffer' })
+vim.api.nvim_set_keymap('n', '<leader>bn', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true, desc='Next buffer' })
+vim.api.nvim_set_keymap('n', '<leader>bp', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, silent = true, desc='Previous buffer' })
 vim.api.nvim_set_keymap('n', '<leader>bc', ':bnext<CR>:bd#<CR>', { noremap = true, silent = true, desc='Close buffer' })
-vim.api.nvim_set_keymap('n', '<S-l>', ':bnext<CR>', { noremap = true, silent = true, desc='Next buffer' })
-vim.api.nvim_set_keymap('n', '<S-h>', ':bprevious<CR>', { noremap = true, silent = true, desc='Previous buffer' })
+vim.api.nvim_set_keymap('n', '<S-l>', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true, desc='Next buffer' })
+vim.api.nvim_set_keymap('n', '<S-h>', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, silent = true, desc='Previous buffer' })
 
 -- dial.nvim (increment / decrement)
 local dial = require("dial.map")
