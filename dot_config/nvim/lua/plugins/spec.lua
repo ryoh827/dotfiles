@@ -73,6 +73,15 @@ return {
    "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
+      win = {
+        col = 0.5,
+        row = 0.5,
+        width = 0.6,
+        height = { min = 4, max = 25 },
+        border = "rounded",
+        title = true,
+        title_pos = "center",
+      },
       spec = {
         { "<leader>a", group = "AI/Claude" },
         { "<leader>b", group = "Buffer" },
