@@ -15,6 +15,35 @@
 - Completely trivial operations like simple cd commands
 - Temporary execution logs, interim investigation notes, disposable plans
 
+## Coding Behavior Guidelines
+(Use judgment to skip these for trivial tasks. By default, bias toward caution over speed.)
+
+### Think Before Coding
+- State your assumptions explicitly. If uncertain, stop and ask.
+- If multiple interpretations exist, present them instead of silently picking one.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop, name what's confusing, and ask.
+
+### Simplicity First
+- Write only the minimum code that solves the problem. Nothing speculative.
+- Don't add features, abstractions, or configurability that weren't requested.
+- Don't create abstractions for single-use code.
+- Don't write error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it. Ask yourself "would a senior engineer call this overcomplicated?"
+
+### Surgical Changes
+- Touch only what you must. Clean up only your own mess.
+- Don't "improve" adjacent code, comments, or formatting. Don't refactor things that aren't broken.
+- Match the existing style even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+- Remove only the imports/variables/functions your changes made unused. Don't remove pre-existing dead code unless asked.
+- Every changed line should trace directly to the user's request.
+
+### Goal-Driven Execution
+- Transform tasks into verifiable goals ("Add validation" → "Write tests for invalid inputs, then make them pass"; "Fix the bug" → "Write a test that reproduces it, then make it pass").
+- For multi-step tasks, state a brief plan with each step and its verification.
+- Strong success criteria let you loop independently; weak criteria ("make it work") require constant clarification.
+
 ## General Guidelines
 - Always prefer editing existing files over creating new ones
 - Never create temporary documentation files unless explicitly requested
