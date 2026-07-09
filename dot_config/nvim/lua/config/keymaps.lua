@@ -6,6 +6,8 @@ vim.keymap.set("n", "<Space>gO", function()
   require("oil").open_float(".")
 end, { desc = "Oil ." })
 
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { silent = true, desc = 'Clear search highlight' })
+
 -- Telescope
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
@@ -14,6 +16,7 @@ vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' 
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fr', [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], {noremap = true, silent = true, desc = 'Telescope Recent Files'})
 vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = 'Telescope diagnostics' })
+vim.keymap.set('n', '<leader>fR', builtin.resume, { desc = 'Telescope resume' })
 vim.keymap.set('n', '<leader>fs', builtin.lsp_document_symbols, { desc = 'Telescope document symbols' })
 vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = 'Telescope LSP references' })
 vim.keymap.set('n', '<leader>ft', '<cmd>TodoTelescope<CR>', { desc = 'Telescope todo comments' })
@@ -35,9 +38,7 @@ vim.keymap.set('n', '<leader>mT', function()
 end, { desc = 'Toggle tree (recursive)' })
 
 -- buffer (bufferline の表示順で移動する)
-vim.api.nvim_set_keymap('n', '<leader>bd', ':bd<CR>', { noremap = true, silent = true, desc='Delete buffer' })
-vim.api.nvim_set_keymap('n', '<leader>bn', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true, desc='Next buffer' })
-vim.api.nvim_set_keymap('n', '<leader>bp', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, silent = true, desc='Previous buffer' })
+vim.keymap.set('n', '<leader>bd', function() Snacks.bufdelete() end, { silent = true, desc = 'Delete buffer (keep layout)' })
 vim.api.nvim_set_keymap('n', '<leader>bc', ':bnext<CR>:bd#<CR>', { noremap = true, silent = true, desc='Close buffer' })
 vim.api.nvim_set_keymap('n', '<S-l>', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true, desc='Next buffer' })
 vim.api.nvim_set_keymap('n', '<S-h>', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, silent = true, desc='Previous buffer' })

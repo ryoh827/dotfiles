@@ -40,9 +40,6 @@ vim.g.markdown_recommended_style = 0
 require("config.lazy")
 vim.cmd[[colorscheme catppuccin]]
 
-
-local home_dir = os.getenv("HOME")
-package.path = home_dir .. '/.config/nvim/' .. package.path
-
-require("keymaps")
-require("lsps")
+require("config.keymaps")
+require("config.lsps")
+require("config.autocmds")

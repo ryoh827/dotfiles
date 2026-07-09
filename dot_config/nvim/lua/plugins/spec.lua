@@ -42,7 +42,7 @@ return {
     opts = {},
     keys = {
       { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "S", mode = { "n", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
       { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
       { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
@@ -72,7 +72,23 @@ return {
   {
    "folke/which-key.nvim",
     event = "VeryLazy",
-    opts = {},
+    opts = {
+      spec = {
+        { "<leader>a", group = "AI/Claude" },
+        { "<leader>b", group = "Buffer" },
+        { "<leader>c", group = "Code" },
+        { "<leader>d", group = "Diagnostics" },
+        { "<leader>f", group = "Find" },
+        { "<leader>g", group = "File/Format" },
+        { "<leader>h", group = "Hunk" },
+        { "<leader>m", group = "Memo/Toggle" },
+        { "<leader>q", group = "Session" },
+        { "<leader>r", group = "Rename" },
+        { "<leader>s", group = "Search/Replace" },
+        { "<leader>x", group = "Trouble" },
+        { "<leader>y", group = "Yank" },
+      },
+    },
     keys = {{
       "<leader>?",
       function() require("which-key").show({global = false}) end,
@@ -158,7 +174,35 @@ return {
   {
     'lewis6991/gitsigns.nvim',
     config = function()
-      require('gitsigns').setup()
+      require('gitsigns').setup({
+        on_attach = function(bufnr)
+          local gs = require('gitsigns')
+          local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+          map('n', ']c', function()
+            if vim.wo.diff then return ']c' end
+            vim.schedule(function() gs.nav_hunk('next') end)
+            return '<Ignore>'
+          end, { expr = true, desc = 'Next hunk' })
+          map('n', '[c', function()
+            if vim.wo.diff then return '[c' end
+            vim.schedule(function() gs.nav_hunk('prev') end)
+            return '<Ignore>'
+          end, { expr = true, desc = 'Previous hunk' })
+          map('n', '<leader>hs', gs.stage_hunk, { desc = 'Stage hunk' })
+          map('n', '<leader>hr', gs.reset_hunk, { desc = 'Reset hunk' })
+          map('v', '<leader>hs', function() gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end, { desc = 'Stage hunk' })
+          map('v', '<leader>hr', function() gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end, { desc = 'Reset hunk' })
+          map('n', '<leader>hS', gs.stage_buffer, { desc = 'Stage buffer' })
+          map('n', '<leader>hR', gs.reset_buffer, { desc = 'Reset buffer' })
+          map('n', '<leader>hp', gs.preview_hunk, { desc = 'Preview hunk' })
+          map('n', '<leader>hb', function() gs.blame_line({ full = true }) end, { desc = 'Blame line' })
+          map('n', '<leader>hd', gs.diffthis, { desc = 'Diff this' })
+        end,
+      })
     end,
   },
   {
