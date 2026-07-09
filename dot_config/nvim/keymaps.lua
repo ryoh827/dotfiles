@@ -99,3 +99,5 @@ vim.keymap.set('n', 'gl', function() vim.diagnostic.open_float(nil, { focus = fa
 vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, { noremap = true, silent = true, desc = "Previous diagnostic" })
 vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, { noremap = true, silent = true, desc = "Next diagnostic" })
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { noremap = true, silent = true, desc = "Diagnostics to loclist" })
+
+vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], { noremap = true, silent = true, desc = "Terminal: window command prefix" })
