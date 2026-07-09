@@ -25,6 +25,15 @@
   - Per-language guidance: Ruby uses WebMock only; JavaScript/TypeScript uses jest.fn() or MSW only when needed; Python uses the minimum necessary unittest.mock; Go uses minimal mocking via interfaces
   - Limit mocks to cases that require isolating external I/O or unstable dependencies
 
+## Response Conciseness
+- Before writing each sentence, ask "is this truly necessary" and cut it if not
+- Do not write preambles or postambles (play-by-play like "I'll do X" / "I did X", or restating what you already did)
+- Answer questions conclusion-first; explain background or history only when asked
+- Limit explanations of changes or code to the non-obvious points; do not narrate every trivial change
+- When applying a correction, output only the corrected result; do not write the edit history or excuses in the deliverable (e.g. "(was originally ~)", "(because it was wrong)")
+- Do not push unsolicited suggestions (e.g. "other things you could do", "additional notes")
+- Use bullet lists and headings only when they add information, not for decoration
+
 ## Code Generation Rules
 - Do not write any comments when generating code
 - Only add comments when explicitly requested by the user
