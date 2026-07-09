@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+
+      - name: Install shellcheck, zsh, lua5.1
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck zsh lua5.1
+
+      - name: shellcheck
+        run: |
+          shellcheck --severity=warning bin/executable_cgb bin/executable_cmu \
+            dot_codex/executable_codex-pr-review-fetch.sh \
+            dot_codex/executable_codex-pr-review-fix.sh
+
+      - name: zsh syntax check
+        run: |
+          set -euo pipefail
+          for f in dot_zsh/*.zsh; do
+            zsh -n "$f"
+          done
+
+      - name: nvim lua syntax check
+        run: |
+          set -euo pipefail
+          find dot_config/nvim -name '*.lua' -exec luac5.1 -p {} \;
+
+      - name: YAML validity check
+        run: |
+          set -euo pipefail
+          find . -path './.git' -prune -o \
+            \( -name '*.yaml' -o -name '*.yml' \) \
+            -exec sh -c 'ruby -ryaml -e "YAML.load_file(ARGV[0])" "$1"' _ {} \;
+
+      - name: chezmoi template render check
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/fakebin"
+          cat > "$RUNNER_TEMP/fakebin/op" <<'SCRIPT'
+          #!/bin/sh
+          case "$1" in
+            signin) printf '%s' 'dummy-session-token' ;;
+            read) printf '%s' 'dummy-value' ;;
+            *) printf '%s' 'dummy' ;;
+          esac
+          exit 0
+          SCRIPT
+          chmod +x "$RUNNER_TEMP/fakebin/op"
+          export PATH="$RUNNER_TEMP/fakebin:$PATH"
+          find . -path './.git' -prune -o -name '*.tmpl' \
+            -exec sh -c 'chezmoi execute-template -S "$PWD" --file "$1" >/dev/null' _ {} \;
