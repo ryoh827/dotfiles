@@ -101,3 +101,25 @@ vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = tr
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { noremap = true, silent = true, desc = "Diagnostics to loclist" })
 
 vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], { noremap = true, silent = true, desc = "Terminal: window command prefix" })
+
+vim.keymap.set('n', '<leader>w', function()
+  local step = 3
+  vim.notify("Resize: h/l width, j/k height, = equalize, q/<Esc> quit", vim.log.levels.INFO)
+  while true do
+    local ok, key = pcall(vim.fn.getcharstr)
+    if not ok or key == 'q' or key == '\27' then
+      break
+    elseif key == 'h' then
+      vim.cmd('vertical resize -' .. step)
+    elseif key == 'l' then
+      vim.cmd('vertical resize +' .. step)
+    elseif key == 'j' then
+      vim.cmd('resize -' .. step)
+    elseif key == 'k' then
+      vim.cmd('resize +' .. step)
+    elseif key == '=' then
+      vim.cmd('wincmd =')
+    end
+    vim.cmd('redraw')
+  end
+end, { noremap = true, silent = true, desc = "Window resize mode" })
