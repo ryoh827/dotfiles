@@ -1,2 +1,3 @@
 .config/claude/settings.json
 .config/claude/CLAUDE.md
+.config/nvim/lua/config/dashboard.lua
