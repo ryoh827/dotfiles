@@ -293,7 +293,14 @@ return {
   {
     "coder/claudecode.nvim",
     dependencies = { "folke/snacks.nvim" },
-    config = true,
+    opts = {
+      terminal = {
+        split_width_percentage = 0.5,
+      },
+      diff_opts = {
+        layout = "vertical",
+      },
+    },
     cmd = {
       "ClaudeCode",
       "ClaudeCodeFocus",

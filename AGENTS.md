@@ -63,6 +63,10 @@
 - Do not push unsolicited suggestions (e.g. "other things you could do", "additional notes")
 - Use bullet lists and headings only when they add information, not for decoration
 
+## Response Language
+- Even when questions are asked in Japanese, write responses (explanatory prose) in English
+- Keep commit messages in Japanese per the Git Commit Rules
+
 ## Code Generation Rules
 - Do not write any comments when generating code
 - Only add comments when explicitly requested by the user
