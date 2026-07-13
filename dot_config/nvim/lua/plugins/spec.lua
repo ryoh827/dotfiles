@@ -234,12 +234,6 @@ return {
         require('Comment').setup()
     end
   },
-  {
-    'goolord/alpha-nvim',
-    config = function ()
-        require'alpha'.setup(require'config.dashboard'.config)
-    end
-  },
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
   {
     "iamcco/markdown-preview.nvim",
