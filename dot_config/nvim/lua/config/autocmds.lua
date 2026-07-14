@@ -23,11 +23,18 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 vim.o.autoread = true
-vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
   group = augroup,
   callback = function()
     if vim.o.buftype ~= "nofile" then
       vim.cmd("checktime")
     end
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  group = augroup,
+  callback = function()
+    vim.notify("File reloaded from disk", vim.log.levels.INFO, { title = "autoread" })
   end,
 })
