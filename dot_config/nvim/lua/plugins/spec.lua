@@ -292,7 +292,7 @@ return {
         split_width_percentage = 0.5,
       },
       diff_opts = {
-        layout = "vertical",
+        layout = "horizontal",
       },
     },
     cmd = {
