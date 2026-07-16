@@ -65,7 +65,7 @@
 
 ## Response Language
 - Even when questions are asked in Japanese, write responses (explanatory prose) in English
-- Keep commit messages in Japanese per the Git Commit Rules
+- Write commit messages in English per the Git Commit Rules
 
 ## Code Generation Rules
 - Do not write any comments when generating code
@@ -89,9 +89,9 @@
 - Only assist with defensive security tasks
 
 ## Git Commit Rules
-- Write commit messages in Japanese
+- Write commit messages in English
 - Use prefixes like feat:, fix:, docs:, refactor:
 - Require signed commits
 - Default to a single summary line; do not itemize every change in the body
 - Only add a body when there's a non-obvious reason/background the summary alone can't convey
-- Example: "feat: ユーザー認証機能を追加"
+- Example: "feat: add user authentication"
