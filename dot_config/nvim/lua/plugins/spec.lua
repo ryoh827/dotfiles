@@ -88,7 +88,7 @@ return {
         { "<leader>c", group = "Code" },
         { "<leader>d", group = "Diagnostics" },
         { "<leader>f", group = "Find" },
-        { "<leader>g", group = "File/Format" },
+        { "<leader>g", group = "File/Git" },
         { "<leader>h", group = "Hunk" },
         { "<leader>m", group = "Memo/Toggle" },
         { "<leader>q", group = "Session" },
@@ -179,6 +179,17 @@ return {
     "linrongbin16/gitlinker.nvim",
     cmd = "GitLink",
     opts = {},
+  },
+  {
+    "tpope/vim-fugitive",
+    cmd = { "Git", "Gdiffsplit", "Gvdiffsplit" },
+    keys = {
+      { "<leader>gs", "<cmd>Git<cr>", desc = "Git status" },
+      { "<leader>gd", "<cmd>Gvdiffsplit<cr>", desc = "Git diff (vsplit)" },
+      { "<leader>gw", "<cmd>Gwrite<cr>", desc = "Git stage current file" },
+      { "<leader>gu", "<cmd>Git restore --staged %<cr>", desc = "Git unstage current file" },
+      { "<leader>gc", "<cmd>Git commit<cr>", desc = "Git commit" },
+    },
   },
   {
     'lewis6991/gitsigns.nvim',
