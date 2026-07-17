@@ -62,6 +62,7 @@
 - When applying a correction, output only the corrected result; do not write the edit history or excuses in the deliverable (e.g. "(was originally ~)", "(because it was wrong)")
 - Do not push unsolicited suggestions (e.g. "other things you could do", "additional notes")
 - Use bullet lists and headings only when they add information, not for decoration
+- Don't write parenthetical explanations mid-sentence. Split into separate sentences instead
 
 ## Response Language
 - Even when questions are asked in Japanese, write responses (explanatory prose) in English
