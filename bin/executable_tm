@@ -1,0 +1,2 @@
+#!/bin/sh
+exec tmux new-session \; split-window -v -l 20% \; select-pane -U
