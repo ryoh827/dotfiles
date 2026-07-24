@@ -184,7 +184,7 @@ return {
     "tpope/vim-fugitive",
     cmd = { "Git", "Gdiffsplit", "Gvdiffsplit" },
     keys = {
-      { "<leader>gs", "<cmd>Git<cr>", desc = "Git status" },
+      { "<leader>gs", "<cmd>Git!<cr>", desc = "Git status" },
       { "<leader>gd", "<cmd>Gvdiffsplit<cr>", desc = "Git diff (vsplit)" },
       { "<leader>gw", "<cmd>Gwrite<cr>", desc = "Git stage current file" },
       { "<leader>gu", "<cmd>Git restore --staged %<cr>", desc = "Git unstage current file" },

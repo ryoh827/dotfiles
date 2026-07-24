@@ -26,6 +26,7 @@ local options = {
   updatetime = 250,
   splitright = true,
   splitbelow = true,
+  previewheight = 15,
 }
 
 for k, v in pairs(options) do
