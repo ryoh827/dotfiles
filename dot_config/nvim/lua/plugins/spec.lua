@@ -245,7 +245,7 @@ return {
         require('Comment').setup()
     end
   },
-  { "rose-pine/neovim", name = "rose-pine", priority = 1000, opts = { variant = "dawn" } },
+  { "rose-pine/neovim", name = "rose-pine", priority = 1000, opts = { variant = "moon" } },
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
