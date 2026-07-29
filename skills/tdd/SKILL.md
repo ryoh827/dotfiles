@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Use this skill when the user asks to implement something with TDD, test-first, or red-green-refactor. Enforces strict (narrow-sense) TDD as taught by Kent Beck and t_wada - test list, one failing test at a time, minimum code to pass, refactor on green.
+description: Use this skill when implementing new behavior in code, or when the user asks for TDD, test-first, or red-green-refactor. Enforces strict (narrow-sense) TDD as taught by Kent Beck and t_wada - test list, one failing test at a time, minimum code to pass, refactor on green.
 ---
 
 # TDD（狭義のTDD / Red-Green-Refactor）
