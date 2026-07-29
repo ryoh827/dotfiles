@@ -31,7 +31,7 @@ return {
     config = function()
       require("lualine").setup({
         options = {
-          theme = "catppuccin",
+          theme = "rose-pine",
         },
       })
     end,
@@ -245,7 +245,7 @@ return {
         require('Comment').setup()
     end
   },
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000, opts = { flavour = "latte" } },
+  { "rose-pine/neovim", name = "rose-pine", priority = 1000, opts = { variant = "dawn" } },
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
