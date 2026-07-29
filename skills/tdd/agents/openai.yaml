@@ -1,0 +1,4 @@
+version: 1
+display_name: TDD
+short_description: 狭義のTDD（Red-Green-Refactor）で実装する
+default_prompt: テストリストを作り、狭義のTDD（Red-Green-Refactor）のサイクルを1つずつ回して実装してください
