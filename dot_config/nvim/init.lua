@@ -39,7 +39,7 @@ vim.g.copilot_filetypes = {
 vim.g.markdown_recommended_style = 0
 
 require("config.lazy")
-vim.cmd[[colorscheme catppuccin]]
+vim.cmd[[colorscheme rose-pine-dawn]]
 
 require("config.keymaps")
 require("config.lsps")
