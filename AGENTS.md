@@ -70,6 +70,9 @@
 - Even when questions are asked in Japanese, write responses (explanatory prose) in English
 - Write commit messages in English per the Git Commit Rules
 
+## Terminology
+- In Japanese text, write 「デグレ」 instead of 「回帰」 when it means a degradation/regression. Statistical terms such as 回帰分析 are out of scope
+
 ## Code Generation Rules
 - Do not write any comments when generating code
 - Only add comments when explicitly requested by the user
