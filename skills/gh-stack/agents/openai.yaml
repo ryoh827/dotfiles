@@ -1,0 +1,4 @@
+version: 1
+display_name: gh-stack
+short_description: 依存関係のある複数PRをgh stackでスタックPRとして運用する
+default_prompt: この作業を依存関係のある複数PRに分割し、gh stack でスタックPRとして作成してください
