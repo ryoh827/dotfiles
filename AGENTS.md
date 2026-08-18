@@ -51,10 +51,15 @@
 - Follow existing code conventions and patterns in each project
 - Use TodoWrite tool to track complex tasks and provide visibility into progress
 - As a rule, load the `tdd` skill before starting to implement new behavior
-- For work that can be split into multiple dependent PRs, load the `gh-stack` skill and proceed as a stacked PR
 - Do not use mocks when generating tests wherever possible
   - Per-language guidance: Ruby uses WebMock only; JavaScript/TypeScript uses jest.fn() or MSW only when needed; Python uses the minimum necessary unittest.mock; Go uses minimal mocking via interfaces
   - Limit mocks to cases that require isolating external I/O or unstable dependencies
+
+## PR
+- Each PR should contain exactly one semantic change
+- Split a change into multiple PRs when it spans more than one semantic unit
+  - If the changes are independent of each other, split into separate PRs as usual
+  - If the changes depend on each other, load the `gh-stack` skill and proceed as a stacked PR
 
 ## Response Conciseness
 - Before writing each sentence, ask "is this truly necessary" and cut it if not
