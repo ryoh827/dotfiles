@@ -5,7 +5,7 @@ fi
 export PATH="$GOPATH/bin:$PATH"
 
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --smart-group -F'
+  alias ls='eza --smart-group --classify=auto'
 else
   case ${OSTYPE} in
     darwin*) alias ls='ls -G -F' ;;
