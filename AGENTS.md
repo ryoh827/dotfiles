@@ -51,6 +51,7 @@
 - Follow existing code conventions and patterns in each project
 - Use TodoWrite tool to track complex tasks and provide visibility into progress
 - As a rule, load the `tdd` skill before starting to implement new behavior
+- In a new session, once the task is clear, suggest a short session name based on the task and prompt the user to run `/rename <name>` (or `-n <name>` on the next launch)
 - Do not use mocks when generating tests wherever possible
   - Per-language guidance: Ruby uses WebMock only; JavaScript/TypeScript uses jest.fn() or MSW only when needed; Python uses the minimum necessary unittest.mock; Go uses minimal mocking via interfaces
   - Limit mocks to cases that require isolating external I/O or unstable dependencies
