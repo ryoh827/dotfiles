@@ -61,6 +61,7 @@
 - Split a change into multiple PRs when it spans more than one semantic unit
   - If the changes are independent of each other, split into separate PRs as usual
   - If the changes depend on each other, load the `gh-stack` skill and proceed as a stacked PR
+- Never merge PRs on GitHub (e.g. `gh pr merge`) on the user's behalf; leave merging to the user
 
 ## Response Conciseness
 - Before writing each sentence, ask "is this truly necessary" and cut it if not
