@@ -1,0 +1,38 @@
+{
+  "Stop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "{{ .chezmoi.homeDir }}/.claude/hooks/stop-verify-claims.sh",
+          "timeout": 60,
+          "statusMessage": "Checking claims against the turn record..."
+        }
+      ]
+    }
+  ],
+  "SessionStart": [
+    {
+      "matcher": "startup|resume|clear",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "{{ .chezmoi.homeDir }}/.claude/hooks/session-sync-global-memory.sh",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "PreToolUse": [
+    {
+      "matcher": "Edit|Write",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "{{ .chezmoi.homeDir }}/.claude/hooks/guard-claude-md.sh",
+          "timeout": 10
+        }
+      ]
+    }
+  ]
+}
