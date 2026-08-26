@@ -362,5 +362,29 @@ assert_eq "fenced verdict still denies the write" \
   "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
 assert_contains "fenced verdict names the sentence to cut" "$out" "フェンス越しの一文。"
 
+# 26. prose trailing the verdict does not silently disarm the doc gate
+export STUB_OUTPUT='{"intent":"手順を伝える","ok":false,"cut":["末尾に散文がある場合の一文。"]}
+
+The document restates its own purpose twice.'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-trailing" "/Users/x/docs/t.md" "$(long_doc t)")")"
+assert_eq "trailing prose still denies the write" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "trailing prose names the sentence to cut" "$out" "末尾に散文がある場合の一文。"
+
+# 27. a preamble before the verdict does not silently disarm the doc gate
+export STUB_OUTPUT='Here is my assessment:
+
+{"intent":"手順を伝える","ok":false,"cut":["前置きがある場合の一文。"]}'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-preamble" "/Users/x/docs/p.md" "$(long_doc p)")")"
+assert_eq "a preamble still denies the write" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+
+# 28. a verdict carrying a brace inside a quoted sentence survives extraction
+export STUB_OUTPUT='```json
+{"intent":"手順を伝える","ok":false,"cut":["この行の { と } は本文の一部です。"]}
+```'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-brace" "/Users/x/docs/b.md" "$(long_doc b)")")"
+assert_contains "a braced sentence survives extraction" "$out" "この行の { と } は本文の一部です。"
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
