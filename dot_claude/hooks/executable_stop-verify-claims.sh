@@ -1,41 +1,15 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-JUDGE_MODEL="claude-haiku-4-5-20251001"
 MAX_CONSECUTIVE_BLOCKS=2
-JUDGE_TIMEOUT="${JUDGE_TIMEOUT:-45}"
+
+. "$(dirname "${BASH_SOURCE[0]}")/lib/judge.sh"
 
 payload="$(cat)"
 
 fail_open() { exit 0; }
 
-[ -n "${CLAUDE_HOOK_JUDGE:-}" ] && fail_open
-
-run_with_timeout() {
-  local seconds="$1"
-  shift
-  local out
-  out="$(mktemp)" || return 1
-  set -m
-  "$@" >"$out" 2>/dev/null &
-  local pid=$!
-  set +m
-  local waited=0
-  while kill -0 "$pid" 2>/dev/null; do
-    if [ "$waited" -ge "$seconds" ]; then
-      kill -KILL "-$pid" 2>/dev/null
-      rm -f "$out"
-      return 124
-    fi
-    sleep 1
-    waited=$((waited + 1))
-  done
-  wait "$pid"
-  local code=$?
-  cat "$out"
-  rm -f "$out"
-  return "$code"
-}
+judge_is_reentrant && fail_open
 
 session_id="$(printf '%s' "$payload" | jq -r '.session_id // "unknown"' 2>/dev/null)" || fail_open
 transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // ""' 2>/dev/null)" || fail_open
@@ -69,8 +43,6 @@ evidence="$(jq -rs '
 final="$(printf '%s' "$payload" | jq -r '.last_assistant_message // ""' 2>/dev/null)" || fail_open
 [ -n "$final" ] || fail_open
 
-command -v claude >/dev/null 2>&1 || fail_open
-
 read -r -d '' prompt <<PROMPT
 You are auditing an AI coding assistant's final message for unsupported claims.
 
@@ -98,11 +70,7 @@ Reply with JSON only: {"ok":true} if nothing qualifies, otherwise
 {"ok":false,"claims":["<the exact sentence>"]}
 PROMPT
 
-verdict="$(CLAUDE_HOOK_JUDGE=1 run_with_timeout "$JUDGE_TIMEOUT" \
-  claude -p --model "$JUDGE_MODEL" "$prompt")" || fail_open
-[ -n "$verdict" ] || fail_open
-
-verdict="$(printf '%s\n' "$verdict" | sed '/^```/d')"
+verdict="$(judge_ask "$prompt")" || fail_open
 
 claims="$(printf '%s' "$verdict" | jq -r 'if .ok == false then ((.claims // []) | join("\n")) else "" end' 2>/dev/null)" || fail_open
 
