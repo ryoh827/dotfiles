@@ -1,1 +1,3 @@
 .claude/settings.json
+.claude/hooks/test
+.claude/memory-global
