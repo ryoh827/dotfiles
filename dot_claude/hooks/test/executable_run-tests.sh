@@ -47,7 +47,7 @@ make_stub_claude() {
   mkdir -p "$WORK/bin"
   cat >"$WORK/bin/claude" <<'STUB'
 #!/usr/bin/env bash
-{ printf '%s\n' "$@"; cat; } >"$STUB_INPUT_FILE"
+{ printf '%s\n' "$@"; printf 'ENV_JUDGE=%s\n' "${CLAUDE_HOOK_JUDGE:-}"; cat; } >"$STUB_INPUT_FILE"
 printf '%s' "$STUB_OUTPUT"
 exit "${STUB_EXIT:-0}"
 STUB
@@ -128,13 +128,53 @@ export STUB_OUTPUT='{"ok":false,"claims":["x"]}'
 PATH="$WORK/bin:$PATH" run_stop_hook "$no_transcript"
 assert_eq "unreadable transcript fails open" "$?" "0"
 
+# 7. the hook does not re-enter itself through the session it spawns to judge
+export STUB_OUTPUT='{"ok":false,"claims":["再帰"]}'
+nested_payload="$(jq -nc --arg t "$transcript" \
+  '{hook_event_name:"Stop",session_id:"s-nested",transcript_path:$t,last_assistant_message:"やりました。"}')"
+export CLAUDE_HOOK_JUDGE=1
+PATH="$WORK/bin:$PATH" run_stop_hook "$nested_payload"
+assert_eq "a judge session does not run the hook again" "$?" "0"
+unset CLAUDE_HOOK_JUDGE
+
+# 8. the judge is spawned with the re-entry marker set, so it stops the recursion
+PATH="$WORK/bin:$PATH" run_stop_hook "$nested_payload"
+assert_contains "the judge call carries the re-entry marker" \
+  "$(cat "$STUB_INPUT_FILE")" "ENV_JUDGE=1"
+
+# 9. the judge fencing its JSON does not silently disarm the gate
+export STUB_OUTPUT='```json
+{"ok":false,"claims":["フェンス付きの主張"]}
+```'
+fenced_payload="$(jq -nc --arg t "$transcript" \
+  '{hook_event_name:"Stop",session_id:"s-fenced",transcript_path:$t,last_assistant_message:"やりました。"}')"
+PATH="$WORK/bin:$PATH" run_stop_hook "$fenced_payload"
+assert_eq "fenced verdict still blocks" "$?" "2"
+assert_contains "fenced verdict names the claim" "$(cat "$WORK/stderr")" "フェンス付きの主張"
+
+# 10. a judge that hangs is killed instead of stalling the turn
+cat >"$WORK/bin/claude" <<'STUB'
+#!/usr/bin/env bash
+sleep 5
+printf '%s' '{"ok":false,"claims":["おそい"]}'
+STUB
+chmod +x "$WORK/bin/claude"
+hang_payload="$(jq -nc --arg t "$transcript" \
+  '{hook_event_name:"Stop",session_id:"s-hang",transcript_path:$t,last_assistant_message:"やりました。"}')"
+hang_start=$SECONDS
+JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_stop_hook "$hang_payload"
+assert_eq "a hanging judge fails open" "$?" "0"
+assert_eq "a hanging judge is killed promptly" \
+  "$([ $((SECONDS - hang_start)) -lt 4 ] && echo fast || echo slow)" "fast"
+make_stub_claude
+
 SYNC_HOOK="$HOOK_DIR/executable_session-sync-global-memory.sh"
 
 run_sync_hook() {
   printf '%s' "$2" | CLAUDE_CONFIG_DIR="$1" "$SYNC_HOOK" 2>"$WORK/sync-stderr"
 }
 
-# 7. global memories land in the project store without disturbing local entries
+# 11. global memories land in the project store without disturbing local entries
 CFG="$WORK/cfg"
 mkdir -p "$CFG/memory-global"
 cat >"$CFG/memory-global/no-unverified-claims.md" <<'MEM'
@@ -173,7 +213,7 @@ run_sync_hook "$CFG" "$sync_payload"
 rerun_index="$(cat "$STORE/MEMORY.md")"
 assert_eq "sync is idempotent" "$rerun_index" "$index"
 
-# 8. no global store -> silent no-op
+# 12. no global store -> silent no-op
 EMPTY_CFG="$WORK/empty-cfg"
 mkdir -p "$EMPTY_CFG"
 run_sync_hook "$EMPTY_CFG" "$sync_payload"
@@ -182,7 +222,7 @@ assert_eq "missing global store is silent" "$(cat "$WORK/sync-stderr")" ""
 
 GUARD_HOOK="$HOOK_DIR/executable_guard-claude-md.sh"
 
-# 9. CLAUDE.md edits escalate; every other path passes through untouched
+# 13. CLAUDE.md edits escalate; every other path passes through untouched
 guard_payload() {
   jq -nc --arg p "$1" \
     '{hook_event_name:"PreToolUse",tool_name:"Edit",tool_input:{file_path:$p}}'
