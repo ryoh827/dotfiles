@@ -37,12 +37,16 @@ judge_run_with_timeout() {
 }
 
 judge_ask() {
-  command -v claude >/dev/null 2>&1 || return 1
-  local out
-  out="$(CLAUDE_HOOK_JUDGE=1 judge_run_with_timeout "$JUDGE_TIMEOUT" \
-    claude -p --model "$JUDGE_MODEL" "$1")" || return 1
-  [ -n "$out" ] || return 1
-  out="$(printf '%s' "$out" | perl -0777 -ne 'print $1 if /(\{(?:[^{}"]|"(?:\\.|[^"\\])*"|(?1))*\})/s')"
-  [ -n "$out" ] || return 1
-  printf '%s\n' "$out"
+  command -v claude >/dev/null 2>&1 || return 2
+  local attempt out
+  for attempt in 1 2; do
+    out="$(CLAUDE_HOOK_JUDGE=1 judge_run_with_timeout "$JUDGE_TIMEOUT" \
+      claude -p --model "$JUDGE_MODEL" "$1")" || continue
+    [ -n "$out" ] || continue
+    out="$(printf '%s' "$out" | perl -0777 -ne 'print $1 if /(\{(?:[^{}"]|"(?:\\.|[^"\\])*"|(?1))*\})/s')"
+    [ -n "$out" ] || continue
+    printf '%s\n' "$out"
+    return 0
+  done
+  return 1
 }

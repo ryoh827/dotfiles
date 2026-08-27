@@ -87,7 +87,20 @@ Reply with JSON only:
 {"intent":"<step 1>","ok":false,"cut":["<exact sentence>"]}
 PROMPT
 
-verdict="$(judge_ask "$prompt")" || fail_open "the judge returned no usable verdict"
+verdict="$(judge_ask "$prompt")"
+case $? in
+  0) ;;
+  2) fail_open "no judge is installed" ;;
+  *)
+    printf '%s\n' "$((denials + 1))" >"$state_file" 2>/dev/null
+    {
+      printf 'The slop gate could not reach its judge, so nothing checked this text.\n'
+      printf 'Do it yourself: say in one sentence what this text must convey, cut every\n'
+      printf 'sentence that does not serve it, then write it again.\n'
+    } >&2
+    exit 2
+    ;;
+esac
 
 intent="$(printf '%s' "$verdict" | jq -r '.intent // ""' 2>/dev/null)" || fail_open
 cuts="$(printf '%s' "$verdict" | jq -r 'if .ok == false then ((.cut // []) | join("\n")) else "" end' 2>/dev/null)" || fail_open

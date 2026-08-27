@@ -55,6 +55,19 @@ STUB
   mkdir -p "$WORK/empty-bin"
 }
 
+make_flaky_stub_claude() {
+  mkdir -p "$WORK/bin"
+  cat >"$WORK/bin/claude" <<'STUB'
+#!/usr/bin/env bash
+n="$(cat "$STUB_CALL_COUNT" 2>/dev/null || printf '0')"
+n=$((n + 1))
+printf '%s' "$n" >"$STUB_CALL_COUNT"
+[ "$n" -le "${STUB_FAIL_TIMES:-0}" ] && exit 1
+printf '%s' "$STUB_OUTPUT"
+STUB
+  chmod +x "$WORK/bin/claude"
+}
+
 transcript_unsupported_claim() {
   local f="$WORK/unsupported.jsonl"
   cat >"$f" <<'JSON'
@@ -185,10 +198,36 @@ hang_payload="$(jq -nc --arg t "$transcript" \
   '{hook_event_name:"Stop",session_id:"s-hang",transcript_path:$t,last_assistant_message:"やりました。"}')"
 hang_start=$SECONDS
 JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_stop_hook "$hang_payload"
-assert_eq "a hanging judge fails open" "$?" "1"
-assert_contains "a hanging judge is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
+assert_eq "a hanging judge turns into a self-check" "$?" "2"
+assert_contains "a hanging judge asks the assistant to check itself" "$(cat "$WORK/stderr")" "推測"
 assert_eq "a hanging judge is killed promptly" \
   "$([ $((SECONDS - hang_start)) -lt 4 ] && echo fast || echo slow)" "fast"
+make_stub_claude
+
+# 11. a judge that fails once is retried instead of being given up on
+export STUB_CALL_COUNT="$WORK/calls.txt"
+rm -f "$STUB_CALL_COUNT"
+export STUB_FAIL_TIMES=1
+export STUB_OUTPUT='{"ok":false,"claims":["リトライ後の主張"]}'
+make_flaky_stub_claude
+retry_payload="$(jq -nc --arg t "$transcript" \
+  '{hook_event_name:"Stop",session_id:"s-retry",transcript_path:$t,last_assistant_message:"やりました。"}')"
+PATH="$WORK/bin:$PATH" run_stop_hook "$retry_payload"
+assert_eq "a judge that fails once still reaches a verdict" "$?" "2"
+assert_contains "the retried verdict is the one used" "$(cat "$WORK/stderr")" "リトライ後の主張"
+assert_eq "the judge was asked exactly twice" "$(cat "$STUB_CALL_COUNT")" "2"
+
+# 12. a judge that never answers becomes a self-check, never a silent approval
+export STUB_CALL_COUNT="$WORK/calls2.txt"
+rm -f "$STUB_CALL_COUNT"
+export STUB_FAIL_TIMES=99
+make_flaky_stub_claude
+silent_payload="$(jq -nc --arg t "$transcript" \
+  '{hook_event_name:"Stop",session_id:"s-noanswer",transcript_path:$t,last_assistant_message:"やりました。"}')"
+PATH="$WORK/bin:$PATH" run_stop_hook "$silent_payload"
+assert_eq "an unanswering judge does not let the turn end" "$?" "2"
+assert_contains "an unanswering judge hands the check back" "$(cat "$WORK/stderr")" "推測"
+export STUB_FAIL_TIMES=0
 make_stub_claude
 
 SYNC_HOOK="$HOOK_DIR/executable_session-sync-global-memory.sh"
@@ -418,11 +457,10 @@ printf '%s' '{"intent":"x","ok":false,"cut":["a"]}'
 STUB
 chmod +x "$WORK/bin/claude"
 out="$(JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-timeout" "/Users/x/docs/to.md" "$(long_doc to)")")"
-assert_eq "a judge timeout does not block the write" "$?" "1"
+assert_eq "a judge timeout hands the check back instead of approving" "$?" "2"
 assert_eq "a judge timeout writes no verdict to stdout" "$out" ""
-assert_contains "a judge timeout is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
-assert_eq "the doc gate notice fits the one line the transcript shows" \
-  "$(wc -l <"$WORK/judge-stderr" | tr -d ' ')" "1"
+assert_contains "a judge timeout says what to do instead" \
+  "$(cat "$WORK/judge-stderr")" "does not serve it"
 make_stub_claude
 
 # 30. giving up after repeated denials is announced rather than silent
@@ -433,6 +471,8 @@ PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc" >/dev/null
 out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc")"
 assert_eq "giving up does not block the write" "$?" "1"
 assert_contains "giving up is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
+assert_eq "the give-up notice fits the one line the transcript shows" \
+  "$(wc -l <"$WORK/judge-stderr" | tr -d ' ')" "1"
 
 # 31. a PR body handed over by file is judged, not waved through for being one line
 printf '%s\n' "$(long_doc Summary)" >"$WORK/pr-body.md"

@@ -84,7 +84,20 @@ Reply with JSON only: {"ok":true} if nothing qualifies, otherwise
 {"ok":false,"claims":["<the exact sentence>"]}
 PROMPT
 
-verdict="$(judge_ask "$prompt")" || fail_open "the judge returned no usable verdict"
+verdict="$(judge_ask "$prompt")"
+case $? in
+  0) ;;
+  2) fail_open "no judge is installed" ;;
+  *)
+    printf '%s\n' "$((blocks + 1))" >"$state_file" 2>/dev/null
+    {
+      printf 'The claim gate could not reach its judge, so nothing checked this message.\n'
+      printf 'Check it against this turn'\''s tool calls yourself, and restate anything\n'
+      printf 'a tool call does not support as 推測 / 未確認.\n'
+    } >&2
+    exit 2
+    ;;
+esac
 
 claims="$(printf '%s' "$verdict" | jq -r 'if .ok == false then ((.claims // []) | join("\n")) else "" end' 2>/dev/null)" || fail_open
 
