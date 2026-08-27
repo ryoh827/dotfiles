@@ -13,9 +13,13 @@ session_id="$(printf '%s' "$payload" | jq -r '.session_id // "unknown"' 2>/dev/n
 transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // ""' 2>/dev/null)" || fail_open
 [ -n "$transcript" ] && [ -r "$transcript" ] || fail_open
 
-turn="$(jq -rs '[ .[]
-  | select(.type == "user")
-  | select(((.message.content // []) | if type == "array" then . else [] end) | any(.type == "text")) ] | length' \
+turn="$(jq -rs '
+  def said: (.message.content // null)
+    | if type == "string" then . else (if type == "array" then (map(select(.type == "text") | .text) | join("")) else "" end) end;
+  [ .[]
+    | select(.type == "user")
+    | select((.isMeta // false) | not)
+    | select((said | length) > 0) ] | length' \
   "$transcript" 2>/dev/null)" || fail_open
 case "$turn" in ''|*[!0-9]*) turn=0 ;; esac
 
@@ -28,19 +32,25 @@ case "$blocks" in ''|*[!0-9]*) blocks=0 ;; esac
 
 evidence="$(jq -rs '
   def blocks: (.message.content // []) | if type == "array" then . else [] end;
+  def spoken: (.message.content // null) | if type == "string" then . else null end;
+  def said: (spoken // (blocks | map(select(.type == "text") | .text) | join("")));
+  def starts_turn: .type == "user" and ((.isMeta // false) | not) and ((said | length) > 0);
   [ .[] | select(.type == "user" or .type == "assistant") ] as $m
-  | ([ $m | to_entries[]
-       | select(.value.type == "user" and (.value | blocks | any(.type == "text")))
-       | .key ] | last // 0) as $start
+  | ([ $m | to_entries[] | select(.value | starts_turn) | .key ] | last // 0) as $start
   | $m[$start:]
-  | map(. as $line | ($line | blocks) | map(
-      if .type == "tool_use" then
-        "TOOL_USE " + .name + " " + ((.input // {}) | tojson | .[0:400])
-      elif .type == "tool_result" then
-        "TOOL_RESULT " + ((.content // "") | if type == "string" then . else tojson end | .[0:600])
-      elif .type == "text" then
-        (($line.type) | ascii_upcase) + "_TEXT " + (.text | .[0:1500])
-      else empty end))
+  | map(. as $line
+      | if ($line | spoken) != null then
+          [ (($line.type) | ascii_upcase) + "_TEXT " + (($line | spoken) | .[0:1500]) ]
+        else
+          ($line | blocks) | map(
+            if .type == "tool_use" then
+              "TOOL_USE " + .name + " " + ((.input // {}) | tojson | .[0:400])
+            elif .type == "tool_result" then
+              "TOOL_RESULT " + ((.content // "") | if type == "string" then . else tojson end | .[0:600])
+            elif .type == "text" then
+              (($line.type) | ascii_upcase) + "_TEXT " + (.text | .[0:1500])
+            else empty end)
+        end)
   | flatten | join("\n")
 ' "$transcript" 2>/dev/null)" || fail_open
 

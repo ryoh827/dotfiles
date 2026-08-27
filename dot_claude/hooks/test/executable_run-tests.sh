@@ -58,9 +58,9 @@ STUB
 transcript_unsupported_claim() {
   local f="$WORK/unsupported.jsonl"
   cat >"$f" <<'JSON'
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"前の話"}]}}
+{"type":"user","message":{"role":"user","content":"前の話"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Grep","input":{"pattern":"old"}}]}}
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"メモリに書いておいて"}]}}
+{"type":"user","message":{"role":"user","content":"メモリに書いておいて"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"メモリに書きました。"}]}}
 JSON
   printf '%s' "$f"
@@ -109,11 +109,11 @@ assert_eq "the notice fits the one line the transcript shows" \
   "$(wc -l <"$WORK/stderr" | tr -d ' ')" "1"
 
 cat >"$WORK/next-turn.jsonl" <<'JSON'
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"前の話"}]}}
+{"type":"user","message":{"role":"user","content":"前の話"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"はい。"}]}}
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"メモリに書いておいて"}]}}
+{"type":"user","message":{"role":"user","content":"メモリに書いておいて"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"書きました。"}]}}
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"次のお願い"}]}}
+{"type":"user","message":{"role":"user","content":"次のお願い"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"やりました。"}]}}
 JSON
 export STUB_OUTPUT='{"ok":false,"claims":["次のターンの主張"]}'
@@ -125,10 +125,12 @@ assert_contains "the later turn's claim is named" "$(cat "$WORK/stderr")" "次�
 
 # 5. evidence covers this turn's tool calls and excludes earlier turns
 cat >"$WORK/scoped.jsonl" <<'JSON'
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"前の話"}]}}
+{"type":"user","message":{"role":"user","content":"前の話"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Grep","input":{"pattern":"STALE_MARKER"}}]}}
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"設定を読んで"}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"stale result"}]}}
+{"type":"user","message":{"role":"user","content":"設定を読んで"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Read","input":{"file_path":"/etc/FRESH_MARKER"}}]}}
+{"type":"user","isMeta":true,"message":{"role":"user","content":"Base directory for this skill: /x"}}
 {"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"contents of FRESH_MARKER"}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"読みました。"}]}}
 JSON
