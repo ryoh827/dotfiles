@@ -417,5 +417,17 @@ out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc")"
 assert_eq "giving up does not block the write" "$?" "1"
 assert_contains "giving up is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
 
+# 31. a PR body handed over by file is judged, not waved through for being one line
+printf '%s\n' "$(long_doc Summary)" >"$WORK/pr-body.md"
+export STUB_OUTPUT='{"intent":"変更の要点を伝える","ok":false,"cut":["ファイル越しの一文。"]}'
+rm -f "$STUB_INPUT_FILE"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(bash_payload "s-pr-file" "gh pr create --base main --title 'feat: x' --body-file $WORK/pr-body.md")")"
+assert_eq "a PR body passed by file is denied" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "the judge is shown the file's contents" \
+  "$(cat "$STUB_INPUT_FILE" 2>/dev/null)" "本文の行 7。"
+assert_not_contains "the judge is not told to skip past a command it was never given" \
+  "$(cat "$STUB_INPUT_FILE" 2>/dev/null)" "Ignore the command"
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]

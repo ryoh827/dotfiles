@@ -32,11 +32,18 @@ case "$tool" in
       *"gh pr create"*|*"gh pr edit"*) ;;
       *) exit 0 ;;
     esac
+    body_file="$(printf '%s' "$content" | sed -n "s/.*--body-file[ =]*[\"']*\([^ \"']*\).*/\1/p")"
     target="gh-pr"
-    header="SHELL COMMAND CARRYING A PULL REQUEST BODY"
-    scope_note="Judge only the pull request body text inside the command. Ignore the command
+    if [ -n "$body_file" ] && [ -r "$body_file" ]; then
+      content="$(cat "$body_file")"
+      header="PULL REQUEST BODY"
+      scope_note="The body may follow a repository template; keep that template's scaffolding."
+    else
+      header="SHELL COMMAND CARRYING A PULL REQUEST BODY"
+      scope_note="Judge only the pull request body text inside the command. Ignore the command
 itself, its flags, and shell quoting. The body may follow a repository template;
 keep that template's scaffolding."
+    fi
     ;;
   *) exit 0 ;;
 esac
