@@ -94,7 +94,7 @@ PATH="/usr/bin:/bin" run_stop_hook "$payload"
 assert_eq "missing judge fails open" "$?" "1"
 assert_contains "missing judge is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
 
-# 4. third consecutive block in one session -> fail open
+# 4. third consecutive block in one turn -> fail open, but a later turn is judged again
 export STUB_OUTPUT='{"ok":false,"claims":["繰り返し"]}'
 loop_payload="$(jq -nc --arg t "$transcript" \
   '{hook_event_name:"Stop",session_id:"s-loop",transcript_path:$t,last_assistant_message:"やりました。"}')"
@@ -107,6 +107,21 @@ assert_eq "third consecutive block fails open" "$?" "1"
 assert_contains "giving up on the turn is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
 assert_eq "the notice fits the one line the transcript shows" \
   "$(wc -l <"$WORK/stderr" | tr -d ' ')" "1"
+
+cat >"$WORK/next-turn.jsonl" <<'JSON'
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"前の話"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"はい。"}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"メモリに書いておいて"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"書きました。"}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"次のお願い"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"やりました。"}]}}
+JSON
+export STUB_OUTPUT='{"ok":false,"claims":["次のターンの主張"]}'
+next_turn_payload="$(jq -nc --arg t "$WORK/next-turn.jsonl" \
+  '{hook_event_name:"Stop",session_id:"s-loop",transcript_path:$t,last_assistant_message:"やりました。"}')"
+PATH="$WORK/bin:$PATH" run_stop_hook "$next_turn_payload"
+assert_eq "a later turn in the same session is judged again" "$?" "2"
+assert_contains "the later turn's claim is named" "$(cat "$WORK/stderr")" "次のターンの主張"
 
 # 5. evidence covers this turn's tool calls and excludes earlier turns
 cat >"$WORK/scoped.jsonl" <<'JSON'
