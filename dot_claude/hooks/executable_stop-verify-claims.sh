@@ -13,9 +13,15 @@ session_id="$(printf '%s' "$payload" | jq -r '.session_id // "unknown"' 2>/dev/n
 transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // ""' 2>/dev/null)" || fail_open
 [ -n "$transcript" ] && [ -r "$transcript" ] || fail_open
 
+turn="$(jq -rs '[ .[]
+  | select(.type == "user")
+  | select(((.message.content // []) | if type == "array" then . else [] end) | any(.type == "text")) ] | length' \
+  "$transcript" 2>/dev/null)" || fail_open
+case "$turn" in ''|*[!0-9]*) turn=0 ;; esac
+
 state_dir="${TMPDIR:-/tmp}/claude-stop-gate"
 mkdir -p "$state_dir" 2>/dev/null || fail_open
-state_file="$state_dir/$session_id"
+state_file="$state_dir/$session_id-$turn"
 blocks="$(cat "$state_file" 2>/dev/null || printf '0')"
 case "$blocks" in ''|*[!0-9]*) blocks=0 ;; esac
 [ "$blocks" -ge "$MAX_CONSECUTIVE_BLOCKS" ] && fail_open "gave up after $MAX_CONSECUTIVE_BLOCKS blocks this turn"
