@@ -8,9 +8,7 @@ MAX_CONSECUTIVE_DENIALS=2
 
 payload="$(cat)"
 
-fail_open() { exit 0; }
-
-judge_is_reentrant && fail_open
+judge_is_reentrant && exit 0
 
 session_id="$(printf '%s' "$payload" | jq -r '.session_id // "unknown"' 2>/dev/null)" || fail_open
 
@@ -53,7 +51,7 @@ mkdir -p "$state_dir" 2>/dev/null || fail_open
 state_file="$state_dir/$session_id-$(printf '%s' "$target" | cksum | cut -d' ' -f1)"
 denials="$(cat "$state_file" 2>/dev/null || printf '0')"
 case "$denials" in ''|*[!0-9]*) denials=0 ;; esac
-[ "$denials" -ge "$MAX_CONSECUTIVE_DENIALS" ] && fail_open
+[ "$denials" -ge "$MAX_CONSECUTIVE_DENIALS" ] && fail_open "gave up after $MAX_CONSECUTIVE_DENIALS denials on this document"
 
 read -r -d '' prompt <<PROMPT
 You are auditing text an AI coding assistant is about to write.
@@ -82,7 +80,7 @@ Reply with JSON only:
 {"intent":"<step 1>","ok":false,"cut":["<exact sentence>"]}
 PROMPT
 
-verdict="$(judge_ask "$prompt")" || fail_open
+verdict="$(judge_ask "$prompt")" || fail_open "the judge returned no usable verdict"
 
 intent="$(printf '%s' "$verdict" | jq -r '.intent // ""' 2>/dev/null)" || fail_open
 cuts="$(printf '%s' "$verdict" | jq -r 'if .ok == false then ((.cut // []) | join("\n")) else "" end' 2>/dev/null)" || fail_open

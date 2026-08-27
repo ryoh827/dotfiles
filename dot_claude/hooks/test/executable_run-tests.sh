@@ -91,7 +91,8 @@ assert_eq "clean verdict ends the turn" "$?" "0"
 # 3. claude not on PATH -> fail open
 export STUB_OUTPUT='{"ok":false,"claims":["x"]}'
 PATH="/usr/bin:/bin" run_stop_hook "$payload"
-assert_eq "missing judge fails open" "$?" "0"
+assert_eq "missing judge fails open" "$?" "1"
+assert_contains "missing judge is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
 
 # 4. third consecutive block in one session -> fail open
 export STUB_OUTPUT='{"ok":false,"claims":["繰り返し"]}'
@@ -102,7 +103,10 @@ assert_eq "first block still blocks" "$?" "2"
 PATH="$WORK/bin:$PATH" run_stop_hook "$loop_payload"
 assert_eq "second block still blocks" "$?" "2"
 PATH="$WORK/bin:$PATH" run_stop_hook "$loop_payload"
-assert_eq "third consecutive block fails open" "$?" "0"
+assert_eq "third consecutive block fails open" "$?" "1"
+assert_contains "giving up on the turn is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
+assert_eq "the notice fits the one line the transcript shows" \
+  "$(wc -l <"$WORK/stderr" | tr -d ' ')" "1"
 
 # 5. evidence covers this turn's tool calls and excludes earlier turns
 cat >"$WORK/scoped.jsonl" <<'JSON'
@@ -126,7 +130,7 @@ assert_not_contains "evidence excludes earlier turns" "$judge_input" "STALE_MARK
 no_transcript="$(jq -nc '{hook_event_name:"Stop",session_id:"s-none",transcript_path:"/nonexistent/x.jsonl",last_assistant_message:"やりました。"}')"
 export STUB_OUTPUT='{"ok":false,"claims":["x"]}'
 PATH="$WORK/bin:$PATH" run_stop_hook "$no_transcript"
-assert_eq "unreadable transcript fails open" "$?" "0"
+assert_eq "unreadable transcript fails open" "$?" "1"
 
 # 7. the hook does not re-enter itself through the session it spawns to judge
 export STUB_OUTPUT='{"ok":false,"claims":["再帰"]}'
@@ -135,6 +139,7 @@ nested_payload="$(jq -nc --arg t "$transcript" \
 export CLAUDE_HOOK_JUDGE=1
 PATH="$WORK/bin:$PATH" run_stop_hook "$nested_payload"
 assert_eq "a judge session does not run the hook again" "$?" "0"
+assert_eq "not applying is silent, unlike failing to check" "$(cat "$WORK/stderr")" ""
 unset CLAUDE_HOOK_JUDGE
 
 # 8. the judge is spawned with the re-entry marker set, so it stops the recursion
@@ -163,7 +168,8 @@ hang_payload="$(jq -nc --arg t "$transcript" \
   '{hook_event_name:"Stop",session_id:"s-hang",transcript_path:$t,last_assistant_message:"やりました。"}')"
 hang_start=$SECONDS
 JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_stop_hook "$hang_payload"
-assert_eq "a hanging judge fails open" "$?" "0"
+assert_eq "a hanging judge fails open" "$?" "1"
+assert_contains "a hanging judge is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
 assert_eq "a hanging judge is killed promptly" \
   "$([ $((SECONDS - hang_start)) -lt 4 ] && echo fast || echo slow)" "fast"
 make_stub_claude
@@ -351,6 +357,7 @@ export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["a"]}'
 export CLAUDE_HOOK_JUDGE=1
 out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-nested" "/Users/x/docs/n2.md" "$(long_doc n2)")")"
 assert_eq "a judge session does not run the doc gate" "$out" ""
+assert_eq "the doc gate is silent when it does not apply" "$(cat "$WORK/judge-stderr")" ""
 unset CLAUDE_HOOK_JUDGE
 
 # 25. the judge fencing its JSON does not silently disarm the doc gate
@@ -385,6 +392,30 @@ export STUB_OUTPUT='```json
 ```'
 out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-brace" "/Users/x/docs/b.md" "$(long_doc b)")")"
 assert_contains "a braced sentence survives extraction" "$out" "この行の { と } は本文の一部です。"
+
+# 29. a judge timeout is announced instead of passing for approval
+cat >"$WORK/bin/claude" <<'STUB'
+#!/usr/bin/env bash
+sleep 5
+printf '%s' '{"intent":"x","ok":false,"cut":["a"]}'
+STUB
+chmod +x "$WORK/bin/claude"
+out="$(JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-timeout" "/Users/x/docs/to.md" "$(long_doc to)")")"
+assert_eq "a judge timeout does not block the write" "$?" "1"
+assert_eq "a judge timeout writes no verdict to stdout" "$out" ""
+assert_contains "a judge timeout is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
+assert_eq "the doc gate notice fits the one line the transcript shows" \
+  "$(wc -l <"$WORK/judge-stderr" | tr -d ' ')" "1"
+make_stub_claude
+
+# 30. giving up after repeated denials is announced rather than silent
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["a"]}'
+cb_doc="$(judge_payload "s-doc-cb" "/Users/x/docs/cb.md" "$(long_doc cb)")"
+PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc" >/dev/null
+PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc" >/dev/null
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc")"
+assert_eq "giving up does not block the write" "$?" "1"
+assert_contains "giving up is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]

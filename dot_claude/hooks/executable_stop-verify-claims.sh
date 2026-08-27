@@ -7,9 +7,7 @@ MAX_CONSECUTIVE_BLOCKS=2
 
 payload="$(cat)"
 
-fail_open() { exit 0; }
-
-judge_is_reentrant && fail_open
+judge_is_reentrant && exit 0
 
 session_id="$(printf '%s' "$payload" | jq -r '.session_id // "unknown"' 2>/dev/null)" || fail_open
 transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // ""' 2>/dev/null)" || fail_open
@@ -20,7 +18,7 @@ mkdir -p "$state_dir" 2>/dev/null || fail_open
 state_file="$state_dir/$session_id"
 blocks="$(cat "$state_file" 2>/dev/null || printf '0')"
 case "$blocks" in ''|*[!0-9]*) blocks=0 ;; esac
-[ "$blocks" -ge "$MAX_CONSECUTIVE_BLOCKS" ] && fail_open
+[ "$blocks" -ge "$MAX_CONSECUTIVE_BLOCKS" ] && fail_open "gave up after $MAX_CONSECUTIVE_BLOCKS blocks this turn"
 
 evidence="$(jq -rs '
   def blocks: (.message.content // []) | if type == "array" then . else [] end;
@@ -70,7 +68,7 @@ Reply with JSON only: {"ok":true} if nothing qualifies, otherwise
 {"ok":false,"claims":["<the exact sentence>"]}
 PROMPT
 
-verdict="$(judge_ask "$prompt")" || fail_open
+verdict="$(judge_ask "$prompt")" || fail_open "the judge returned no usable verdict"
 
 claims="$(printf '%s' "$verdict" | jq -r 'if .ok == false then ((.claims // []) | join("\n")) else "" end' 2>/dev/null)" || fail_open
 

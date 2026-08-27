@@ -1,6 +1,11 @@
 JUDGE_MODEL="${JUDGE_MODEL:-claude-haiku-4-5-20251001}"
 JUDGE_TIMEOUT="${JUDGE_TIMEOUT:-45}"
 
+fail_open() {
+  printf '%s skipped its check: %s\n' "$(basename "$0")" "${1:-reason unknown}" >&2
+  exit 1
+}
+
 judge_is_reentrant() {
   [ -n "${CLAUDE_HOOK_JUDGE:-}" ]
 }
