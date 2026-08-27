@@ -91,7 +91,8 @@ assert_eq "clean verdict ends the turn" "$?" "0"
 # 3. claude not on PATH -> fail open
 export STUB_OUTPUT='{"ok":false,"claims":["x"]}'
 PATH="/usr/bin:/bin" run_stop_hook "$payload"
-assert_eq "missing judge fails open" "$?" "0"
+assert_eq "missing judge fails open" "$?" "1"
+assert_contains "missing judge is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
 
 # 4. third consecutive block in one session -> fail open
 export STUB_OUTPUT='{"ok":false,"claims":["繰り返し"]}'
@@ -102,7 +103,10 @@ assert_eq "first block still blocks" "$?" "2"
 PATH="$WORK/bin:$PATH" run_stop_hook "$loop_payload"
 assert_eq "second block still blocks" "$?" "2"
 PATH="$WORK/bin:$PATH" run_stop_hook "$loop_payload"
-assert_eq "third consecutive block fails open" "$?" "0"
+assert_eq "third consecutive block fails open" "$?" "1"
+assert_contains "giving up on the turn is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
+assert_eq "the notice fits the one line the transcript shows" \
+  "$(wc -l <"$WORK/stderr" | tr -d ' ')" "1"
 
 # 5. evidence covers this turn's tool calls and excludes earlier turns
 cat >"$WORK/scoped.jsonl" <<'JSON'
@@ -126,7 +130,7 @@ assert_not_contains "evidence excludes earlier turns" "$judge_input" "STALE_MARK
 no_transcript="$(jq -nc '{hook_event_name:"Stop",session_id:"s-none",transcript_path:"/nonexistent/x.jsonl",last_assistant_message:"やりました。"}')"
 export STUB_OUTPUT='{"ok":false,"claims":["x"]}'
 PATH="$WORK/bin:$PATH" run_stop_hook "$no_transcript"
-assert_eq "unreadable transcript fails open" "$?" "0"
+assert_eq "unreadable transcript fails open" "$?" "1"
 
 # 7. the hook does not re-enter itself through the session it spawns to judge
 export STUB_OUTPUT='{"ok":false,"claims":["再帰"]}'
@@ -135,6 +139,7 @@ nested_payload="$(jq -nc --arg t "$transcript" \
 export CLAUDE_HOOK_JUDGE=1
 PATH="$WORK/bin:$PATH" run_stop_hook "$nested_payload"
 assert_eq "a judge session does not run the hook again" "$?" "0"
+assert_eq "not applying is silent, unlike failing to check" "$(cat "$WORK/stderr")" ""
 unset CLAUDE_HOOK_JUDGE
 
 # 8. the judge is spawned with the re-entry marker set, so it stops the recursion
@@ -163,7 +168,8 @@ hang_payload="$(jq -nc --arg t "$transcript" \
   '{hook_event_name:"Stop",session_id:"s-hang",transcript_path:$t,last_assistant_message:"やりました。"}')"
 hang_start=$SECONDS
 JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_stop_hook "$hang_payload"
-assert_eq "a hanging judge fails open" "$?" "0"
+assert_eq "a hanging judge fails open" "$?" "1"
+assert_contains "a hanging judge is announced" "$(cat "$WORK/stderr")" "stop-verify-claims.sh"
 assert_eq "a hanging judge is killed promptly" \
   "$([ $((SECONDS - hang_start)) -lt 4 ] && echo fast || echo slow)" "fast"
 make_stub_claude
@@ -240,6 +246,188 @@ assert_eq "unrelated edit stays silent" "$out" ""
 out="$(guard_payload "/Users/x/project/docs/CLAUDE.md.tmpl" | "$GUARD_HOOK")"
 assert_eq "CLAUDE.md template also escalates" \
   "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "escalate"
+
+JUDGE_HOOK="$HOOK_DIR/executable_judge-doc-slop.sh"
+
+long_doc() {
+  printf '# %s\n\n' "$1"
+  for i in 1 2 3 4 5 6 7 8 9 10 11 12; do printf '本文の行 %s。\n' "$i"; done
+}
+
+judge_payload() {
+  jq -nc --arg s "$1" --arg p "$2" --arg c "$3" \
+    '{hook_event_name:"PreToolUse",session_id:$s,tool_name:"Write",tool_input:{file_path:$p,content:$c}}'
+}
+
+run_judge_hook() {
+  printf '%s' "$1" | TMPDIR="$WORK" "$JUDGE_HOOK" 2>"$WORK/judge-stderr"
+}
+
+# 14. a verbose document is denied, naming the judged intent and the sentences to cut
+make_stub_claude
+export STUB_INPUT_FILE="$WORK/judge-input.txt"
+export STUB_OUTPUT='{"intent":"hook の導入手順を伝える","ok":false,"cut":["この節は前段の繰り返しです。"]}'
+export STUB_EXIT=0
+verbose_payload="$(judge_payload "s-verbose" "/Users/x/docs/plan.md" "$(long_doc plan)")"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$verbose_payload")"
+assert_eq "verbose document is denied" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "denial names the sentence to cut" "$out" "この節は前段の繰り返しです。"
+assert_contains "denial states the judged intent" "$out" "hook の導入手順を伝える"
+
+# 15. a non-markdown write never reaches the judge
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["y"]}'
+rm -f "$STUB_INPUT_FILE"
+code_payload="$(judge_payload "s-code" "/Users/x/project/main.go" "$(long_doc code)")"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$code_payload")"
+assert_eq "non-markdown write passes through" "$out" ""
+assert_eq "non-markdown write never invokes the judge" \
+  "$([ -e "$STUB_INPUT_FILE" ] && echo called || echo skipped)" "skipped"
+
+# 16. a short document is not worth a judge call
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["y"]}'
+rm -f "$STUB_INPUT_FILE"
+short_payload="$(judge_payload "s-short" "/Users/x/docs/note.md" "$(printf '# Note\n\n一行だけ。\n')")"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$short_payload")"
+assert_eq "short document passes through" "$out" ""
+assert_eq "short document never invokes the judge" \
+  "$([ -e "$STUB_INPUT_FILE" ] && echo called || echo skipped)" "skipped"
+
+bash_payload() {
+  jq -nc --arg s "$1" --arg c "$2" \
+    '{hook_event_name:"PreToolUse",session_id:$s,tool_name:"Bash",tool_input:{command:$c}}'
+}
+
+# 17. a verbose PR body is denied, and the judge is shown the body text
+export STUB_OUTPUT='{"intent":"変更の要点を伝える","ok":false,"cut":["この行は本文の繰り返しです。"]}'
+rm -f "$STUB_INPUT_FILE"
+pr_cmd="gh pr create --base main --title 'feat: x' --body '$(long_doc Summary)'"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(bash_payload "s-pr" "$pr_cmd")")"
+assert_eq "verbose PR body is denied" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "judge is shown the PR body" "$(cat "$STUB_INPUT_FILE" 2>/dev/null)" "本文の行 7。"
+
+# 18. an unrelated shell command never reaches the judge
+rm -f "$STUB_INPUT_FILE"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(bash_payload "s-sh" "git status --porcelain")")"
+assert_eq "unrelated command passes through" "$out" ""
+assert_eq "unrelated command never invokes the judge" \
+  "$([ -e "$STUB_INPUT_FILE" ] && echo called || echo skipped)" "skipped"
+
+# 19. a third consecutive denial on one document fails open
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["繰り返し"]}'
+loop_doc="$(judge_payload "s-judge-loop" "/Users/x/docs/loop.md" "$(long_doc loop)")"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$loop_doc")"
+assert_eq "first denial still denies" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$loop_doc")"
+assert_eq "second denial still denies" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$loop_doc")"
+assert_eq "third consecutive denial fails open" "$out" ""
+
+# 20. a document whose every sentence earns its place passes through untouched
+export STUB_OUTPUT='{"intent":"x","ok":true}'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-clean" "/Users/x/docs/clean.md" "$(long_doc clean)")")"
+assert_eq "clean document passes through" "$out" ""
+
+# 21. giving up on one document does not disarm the gate for the next one
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["a"]}'
+capped_doc="$(judge_payload "s-cap" "/Users/x/docs/capped.md" "$(long_doc capped)")"
+PATH="$WORK/bin:$PATH" run_judge_hook "$capped_doc" >/dev/null
+PATH="$WORK/bin:$PATH" run_judge_hook "$capped_doc" >/dev/null
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$capped_doc")"
+assert_eq "the capped document is let through" "$out" ""
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-cap" "/Users/x/docs/other.md" "$(long_doc other)")")"
+assert_eq "a different document in the same session is still judged" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+
+# 22. the judge being unavailable never blocks a write
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["a"]}'
+out="$(PATH="/usr/bin:/bin" run_judge_hook "$(judge_payload "s-nojudge" "/Users/x/docs/n.md" "$(long_doc n)")")"
+assert_eq "missing judge fails open" "$out" ""
+
+# 23. an unparseable verdict never blocks a write
+export STUB_OUTPUT='not json at all'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-garbage" "/Users/x/docs/g.md" "$(long_doc g)")")"
+assert_eq "unparseable verdict fails open" "$out" ""
+
+# 24. the doc gate does not run inside the session it spawns to judge
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["a"]}'
+export CLAUDE_HOOK_JUDGE=1
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-nested" "/Users/x/docs/n2.md" "$(long_doc n2)")")"
+assert_eq "a judge session does not run the doc gate" "$out" ""
+assert_eq "the doc gate is silent when it does not apply" "$(cat "$WORK/judge-stderr")" ""
+unset CLAUDE_HOOK_JUDGE
+
+# 25. the judge fencing its JSON does not silently disarm the doc gate
+export STUB_OUTPUT='```json
+{"intent":"手順を伝える","ok":false,"cut":["フェンス越しの一文。"]}
+```'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-fenced" "/Users/x/docs/f.md" "$(long_doc f)")")"
+assert_eq "fenced verdict still denies the write" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "fenced verdict names the sentence to cut" "$out" "フェンス越しの一文。"
+
+# 26. prose trailing the verdict does not silently disarm the doc gate
+export STUB_OUTPUT='{"intent":"手順を伝える","ok":false,"cut":["末尾に散文がある場合の一文。"]}
+
+The document restates its own purpose twice.'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-trailing" "/Users/x/docs/t.md" "$(long_doc t)")")"
+assert_eq "trailing prose still denies the write" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "trailing prose names the sentence to cut" "$out" "末尾に散文がある場合の一文。"
+
+# 27. a preamble before the verdict does not silently disarm the doc gate
+export STUB_OUTPUT='Here is my assessment:
+
+{"intent":"手順を伝える","ok":false,"cut":["前置きがある場合の一文。"]}'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-preamble" "/Users/x/docs/p.md" "$(long_doc p)")")"
+assert_eq "a preamble still denies the write" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+
+# 28. a verdict carrying a brace inside a quoted sentence survives extraction
+export STUB_OUTPUT='```json
+{"intent":"手順を伝える","ok":false,"cut":["この行の { と } は本文の一部です。"]}
+```'
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-brace" "/Users/x/docs/b.md" "$(long_doc b)")")"
+assert_contains "a braced sentence survives extraction" "$out" "この行の { と } は本文の一部です。"
+
+# 29. a judge timeout is announced instead of passing for approval
+cat >"$WORK/bin/claude" <<'STUB'
+#!/usr/bin/env bash
+sleep 5
+printf '%s' '{"intent":"x","ok":false,"cut":["a"]}'
+STUB
+chmod +x "$WORK/bin/claude"
+out="$(JUDGE_TIMEOUT=1 PATH="$WORK/bin:$PATH" run_judge_hook "$(judge_payload "s-doc-timeout" "/Users/x/docs/to.md" "$(long_doc to)")")"
+assert_eq "a judge timeout does not block the write" "$?" "1"
+assert_eq "a judge timeout writes no verdict to stdout" "$out" ""
+assert_contains "a judge timeout is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
+assert_eq "the doc gate notice fits the one line the transcript shows" \
+  "$(wc -l <"$WORK/judge-stderr" | tr -d ' ')" "1"
+make_stub_claude
+
+# 30. giving up after repeated denials is announced rather than silent
+export STUB_OUTPUT='{"intent":"x","ok":false,"cut":["a"]}'
+cb_doc="$(judge_payload "s-doc-cb" "/Users/x/docs/cb.md" "$(long_doc cb)")"
+PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc" >/dev/null
+PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc" >/dev/null
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$cb_doc")"
+assert_eq "giving up does not block the write" "$?" "1"
+assert_contains "giving up is announced" "$(cat "$WORK/judge-stderr")" "judge-doc-slop.sh"
+
+# 31. a PR body handed over by file is judged, not waved through for being one line
+printf '%s\n' "$(long_doc Summary)" >"$WORK/pr-body.md"
+export STUB_OUTPUT='{"intent":"変更の要点を伝える","ok":false,"cut":["ファイル越しの一文。"]}'
+rm -f "$STUB_INPUT_FILE"
+out="$(PATH="$WORK/bin:$PATH" run_judge_hook "$(bash_payload "s-pr-file" "gh pr create --base main --title 'feat: x' --body-file $WORK/pr-body.md")")"
+assert_eq "a PR body passed by file is denied" \
+  "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision')" "deny"
+assert_contains "the judge is shown the file's contents" \
+  "$(cat "$STUB_INPUT_FILE" 2>/dev/null)" "本文の行 7。"
+assert_not_contains "the judge is not told to skip past a command it was never given" \
+  "$(cat "$STUB_INPUT_FILE" 2>/dev/null)" "Ignore the command"
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
