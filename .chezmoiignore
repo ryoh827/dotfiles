@@ -1,3 +1,9 @@
 .claude/settings.json
 .claude/hooks/test
 .claude/memory-global
+.claude/skills/plan-go
+.claude/skills/plan-review
+.codex/skills/plan-go
+.codex/skills/plan-review
+skills/plan-go
+skills/plan-review
