@@ -3,10 +3,39 @@ set -uo pipefail
 
 JUDGE_MODEL="claude-haiku-4-5-20251001"
 MAX_CONSECUTIVE_BLOCKS=2
+JUDGE_TIMEOUT="${JUDGE_TIMEOUT:-45}"
 
 payload="$(cat)"
 
 fail_open() { exit 0; }
+
+[ -n "${CLAUDE_HOOK_JUDGE:-}" ] && fail_open
+
+run_with_timeout() {
+  local seconds="$1"
+  shift
+  local out
+  out="$(mktemp)" || return 1
+  set -m
+  "$@" >"$out" 2>/dev/null &
+  local pid=$!
+  set +m
+  local waited=0
+  while kill -0 "$pid" 2>/dev/null; do
+    if [ "$waited" -ge "$seconds" ]; then
+      kill -KILL "-$pid" 2>/dev/null
+      rm -f "$out"
+      return 124
+    fi
+    sleep 1
+    waited=$((waited + 1))
+  done
+  wait "$pid"
+  local code=$?
+  cat "$out"
+  rm -f "$out"
+  return "$code"
+}
 
 session_id="$(printf '%s' "$payload" | jq -r '.session_id // "unknown"' 2>/dev/null)" || fail_open
 transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // ""' 2>/dev/null)" || fail_open
@@ -69,13 +98,11 @@ Reply with JSON only: {"ok":true} if nothing qualifies, otherwise
 {"ok":false,"claims":["<the exact sentence>"]}
 PROMPT
 
-timeout_bin="$(command -v timeout || command -v gtimeout || true)"
-if [ -n "$timeout_bin" ]; then
-  verdict="$("$timeout_bin" 45 claude -p --model "$JUDGE_MODEL" "$prompt" 2>/dev/null)" || fail_open
-else
-  verdict="$(claude -p --model "$JUDGE_MODEL" "$prompt" 2>/dev/null)" || fail_open
-fi
+verdict="$(CLAUDE_HOOK_JUDGE=1 run_with_timeout "$JUDGE_TIMEOUT" \
+  claude -p --model "$JUDGE_MODEL" "$prompt")" || fail_open
 [ -n "$verdict" ] || fail_open
+
+verdict="$(printf '%s\n' "$verdict" | sed '/^```/d')"
 
 claims="$(printf '%s' "$verdict" | jq -r 'if .ok == false then ((.claims // []) | join("\n")) else "" end' 2>/dev/null)" || fail_open
 
