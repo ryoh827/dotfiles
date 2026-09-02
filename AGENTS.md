@@ -74,10 +74,6 @@
 - Don't write empty sections or items just to fill a template's format (e.g. a Test plan when verification is meaningless, summary bullets that state background rather than the actual change)
 - Don't write parenthetical explanations mid-sentence. Split into separate sentences instead
 
-## Response Language
-- Even when questions are asked in Japanese, write responses (explanatory prose) in English
-- Write commit messages in English per the Git Commit Rules
-
 ## Terminology
 - In Japanese text, write 「デグレ」 instead of 「回帰」 when it means a degradation/regression. Statistical terms such as 回帰分析 are out of scope
 
