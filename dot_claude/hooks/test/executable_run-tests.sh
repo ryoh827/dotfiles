@@ -87,5 +87,31 @@ run_sync_hook "$EMPTY_CFG" "$sync_payload"
 assert_eq "missing global store exits cleanly" "$?" "0"
 assert_eq "missing global store is silent" "$(cat "$WORK/sync-stderr")" ""
 
+GUARD_HOOK="$HOOK_DIR/executable_gh_write_guard.sh"
+
+run_guard_hook() {
+  jq -nc --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c}}' | "$GUARD_HOOK"
+}
+
+# 3. gh write commands trigger an ask decision
+for cmd in \
+  'gh api repos/x/y/pulls/1/comments/1/replies -f body=test' \
+  'gh pr comment 1 --body test' \
+  'gh pr review 1 --approve' \
+  'gh pr edit 1 --body-file x.md'
+do
+  out="$(run_guard_hook "$cmd")"
+  assert_contains "guard asks before: $cmd" "$out" '"permissionDecision": "ask"'
+done
+
+# 4. read-only gh calls and unrelated commands pass through silently
+for cmd in \
+  'gh api repos/x/y/pulls/1/comments' \
+  'ls -la'
+do
+  out="$(run_guard_hook "$cmd")"
+  assert_eq "guard is silent for: $cmd" "$out" ""
+done
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
