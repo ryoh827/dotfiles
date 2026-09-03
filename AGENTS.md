@@ -24,6 +24,12 @@
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop, name what's confusing, and ask.
 
+### Verify Before Asserting
+- Don't write a fact as if confirmed when you haven't confirmed it with a tool. Verify it first. Only state that it is unconfirmed when you have no way to check.
+- Negative claims such as "it has no impact", "it isn't used", or "it doesn't exist" are especially dangerous. Don't write one unless you can state what you searched.
+- Treat subagent reports and information from earlier conversations as unverified until you check them yourself. Confirm the claims your conclusion rests on.
+- Don't ask about something you could find out by looking.
+
 ### Simplicity First
 - Write only the minimum code that solves the problem. Nothing speculative.
 - Don't add features, abstractions, or configurability that weren't requested.
