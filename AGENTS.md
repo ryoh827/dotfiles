@@ -97,7 +97,7 @@
 
 ## Language Selection
 - Do not use Python for ad-hoc scripts/tools unless explicitly requested or already the project's language
-- Use Ruby, Go, Rust, or Bun (TypeScript/JavaScript) instead
+- Use Ruby, Rust, or Bun (TypeScript/JavaScript) instead
 - If an existing project is already written in Python, continue using Python for that project
 
 ## File Management

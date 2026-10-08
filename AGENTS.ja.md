@@ -97,7 +97,7 @@
 
 ## 言語選択
 - 明示的な指定や既存プロジェクトの言語がない限り、Python は使用しない
-- 代わりに Ruby, Go, Rust, Bun (TypeScript/JavaScript) のいずれかを使う
+- 代わりに Ruby, Rust, Bun (TypeScript/JavaScript) のいずれかを使う
 - 既存プロジェクトが Python の場合はそのまま Python で作業してよい
 
 ## ファイル管理
