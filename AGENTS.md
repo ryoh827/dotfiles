@@ -96,9 +96,8 @@
 - Add a trailing newline at the end of files
 
 ## Language Selection
-- Do not use Python for ad-hoc scripts/tools unless explicitly requested or already the project's language
-- Use Ruby, Rust, or Bun (TypeScript/JavaScript) instead
-- If an existing project is already written in Python, continue using Python for that project
+- Unless explicitly requested otherwise, write ad-hoc scripts/tools and new development that does not belong to an existing repository in Rust
+- In an existing project, use that project's language
 
 ## File Management
 - Check existing project structure before making changes
