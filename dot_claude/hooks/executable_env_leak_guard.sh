@@ -20,9 +20,23 @@ while IFS= read -r seg; do
   i=0
   while [ "$i" -lt "${#t[@]}" ]; do
     case "${t[$i]##*/}" in
-      sudo | command | builtin | exec | time | nohup | '\') i=$((i + 1)) ;;
+      sudo) argopts=ugUChprtaD ;;
+      exec) argopts=a ;;
+      command | builtin | time | nohup | then | do | else | '!' | '{' | '\') argopts=' ' ;;
+      [A-Za-z_]*=*)
+        i=$((i + 1))
+        continue
+        ;;
       *) break ;;
     esac
+    i=$((i + 1))
+    while [ "$i" -lt "${#t[@]}" ]; do
+      case "${t[$i]}" in
+        -["$argopts"]) i=$((i + 2)) ;;
+        -*) i=$((i + 1)) ;;
+        *) break ;;
+      esac
+    done
   done
   [ "$i" -lt "${#t[@]}" ] || continue
   prog="${t[$i]##*/}"
@@ -34,8 +48,15 @@ while IFS= read -r seg; do
       ;;
     env)
       has_cmd=0
+      skip=0
       for a in "${args[@]}"; do
+        if [ "$skip" -eq 1 ]; then
+          skip=0
+          continue
+        fi
         case "$a" in
+          -u | -C | --unset | --chdir) skip=1 ;;
+          -S* | --split-string*) has_cmd=1 ;;
           -* | *=*) ;;
           *) has_cmd=1 ;;
         esac
@@ -46,6 +67,7 @@ while IFS= read -r seg; do
       has_name=0
       for a in "${args[@]}"; do
         case "$a" in
+          -*[fF]*) has_name=1 ;;
           -*) ;;
           *) has_name=1 ;;
         esac
@@ -87,4 +109,4 @@ while IFS= read -r seg; do
       done
       ;;
   esac
-done < <(printf '%s\n' "$cmd" | tr ';&|`()\n' '\n\n\n\n\n\n')
+done < <(printf '%s\n' "$cmd" | perl -0777 -pe 's/("(?:[^"\\]|\\.)*")|\x27[^\x27]*\x27/my $d = $1; defined $d && $d =~ m{\$\(|`} ? $d : "Q"/gse' | tr ';&|`()\n' '\n\n\n\n\n\n')

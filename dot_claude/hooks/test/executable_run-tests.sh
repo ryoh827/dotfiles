@@ -140,7 +140,16 @@ for cmd in \
   'declare -p' \
   'cat /proc/self/environ' \
   'cat /proc/1234/environ | tr "\\0" "\\n"' \
-  'ls && env'
+  'ls && env' \
+  'env -u FOO' \
+  'env -C /tmp' \
+  'FOO=1 env' \
+  'sudo env' \
+  'sudo -u root env' \
+  'command env' \
+  'command -p env' \
+  'if true; then env; fi' \
+  'echo "$(env)"'
 do
   out="$(run_env_guard_hook "$cmd")"
   assert_contains "env guard denies: $cmd" "$out" '"permissionDecision": "deny"'
@@ -163,6 +172,13 @@ for cmd in \
   'export FOO=bar' \
   'set -euo pipefail' \
   'declare -a arr' \
+  'declare -f' \
+  'env -u FOO bundle exec rspec' \
+  'env -S "ruby -v"' \
+  'sudo -u root ls' \
+  'FOO=1 bundle exec rspec' \
+  'echo "hello (set)"' \
+  "git commit -m 'use env; set'" \
   'ls -la'
 do
   out="$(run_env_guard_hook "$cmd")"
