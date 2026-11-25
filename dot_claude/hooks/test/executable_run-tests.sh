@@ -113,5 +113,61 @@ do
   assert_eq "guard is silent for: $cmd" "$out" ""
 done
 
+ENV_GUARD_HOOK="$HOOK_DIR/executable_env_leak_guard.sh"
+
+run_env_guard_hook() {
+  jq -nc --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c}}' | "$ENV_GUARD_HOOK"
+}
+
+# 5. commands that print the process environment are denied
+for cmd in \
+  'pgrep -fl rspec' \
+  'pgrep -lf rspec' \
+  'pgrep -f -l rspec' \
+  'ps eww -p 1' \
+  'ps ewwo command -p 1' \
+  'ps auxe' \
+  'ps -E -p 1' \
+  'ps -Eef' \
+  'env' \
+  '/usr/bin/env' \
+  'env | sort' \
+  'printenv' \
+  'printenv HOME' \
+  'export -p' \
+  'export' \
+  'set' \
+  'declare -p' \
+  'cat /proc/self/environ' \
+  'cat /proc/1234/environ | tr "\\0" "\\n"' \
+  'ls && env'
+do
+  out="$(run_env_guard_hook "$cmd")"
+  assert_contains "env guard denies: $cmd" "$out" '"permissionDecision": "deny"'
+done
+
+# 6. PID-only, name-only, and non-leaking forms pass through silently
+for cmd in \
+  'pgrep -f rspec' \
+  'pgrep -l rspec' \
+  'pgrep rspec' \
+  'ps -o pid,command -p 123' \
+  'ps -o command= -p 123' \
+  'ps -axo etime,pid' \
+  'ps -o etime -p 123' \
+  'ps aux' \
+  'ps -ef' \
+  'ps -e' \
+  'env FOO=1 bundle exec rspec' \
+  'env -i bash -c true' \
+  'export FOO=bar' \
+  'set -euo pipefail' \
+  'declare -a arr' \
+  'ls -la'
+do
+  out="$(run_env_guard_hook "$cmd")"
+  assert_eq "env guard is silent for: $cmd" "$out" ""
+done
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
