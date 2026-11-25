@@ -18,6 +18,10 @@
         {
           "type": "command",
           "command": "{{ .chezmoi.homeDir }}/.claude/hooks/gh_write_guard.sh"
+        },
+        {
+          "type": "command",
+          "command": "{{ .chezmoi.homeDir }}/.claude/hooks/env_leak_guard.sh"
         }
       ]
     }
